@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const memory = new Map();
+globalThis.localStorage={getItem(k){return memory.get(k)||null;},setItem(k,v){memory.set(k,v);}};
+const app={innerHTML:'',listeners:{},addEventListener(type,fn){this.listeners[type]=fn;},querySelector(){return null;}};
+const toast={innerHTML:''};
+globalThis.document={visibilityState:'visible',addEventListener(){},querySelector(s){return s==='#app'?app:s==='#toast-root'?toast:null;}};
+globalThis.window={READING_ROOM_CONFIG:{},addEventListener(){},scrollTo(){}};
+globalThis.location={protocol:'file:'};
+const click=action=>({target:{closest(selector){return selector==='[data-action]'?{dataset:{action}}:null;},classList:{contains(){return false;}}}});
+const nav=tab=>({preventDefault(){},target:{closest(selector){return selector==='[data-tab]'?{dataset:{tab}}:null;},classList:{contains(){return false;}}}});
+const stored=()=>JSON.parse(memory.get('my-reading-room-demo-v2'));
+await import('../app.js');
+await new Promise(resolve=>setTimeout(resolve,100));
+
+test('real app saves ending-page logs as a delta, advances book position exactly once, and rejects backwards progress',async()=>{
+ await app.listeners.click(nav('log'));
+ assert.match(app.innerHTML,/id="log-page-start-label">page 120/);
+ assert.match(app.innerHTML,/id="log-ending-page"/);
+ await app.listeners.input({target:{id:'log-ending-page',value:'145'}});
+ await app.listeners.click(click('save-log'));
+ const data=stored();
+ const row=data.sessions.find(s=>s.user_book_id==='demo-a-b0'&&s.end_page===145);
+ assert.ok(row,'new log with a stopping page persisted');
+ assert.equal(row.start_page,120);
+ assert.equal(row.pages_read,25);
+ assert.equal(row.duration_minutes,30);
+ assert.equal(data.books.find(b=>b.id==='demo-a-b0').current_page,145);
+ assert.match(app.innerHTML,/id="log-page-start-label">page 145/);
+ assert.match(app.innerHTML,/stopped on p\. 145/);
+ const count=data.sessions.length;
+ await app.listeners.input({target:{id:'log-ending-page',value:'140'}});
+ await app.listeners.click(click('save-log'));
+ assert.match(toast.innerHTML,/later than starting page 145/);
+ assert.equal(stored().sessions.length,count);
+});
+
+test('actual app supports a corrected baseline and preserves the computed reading total',async()=>{
+ await app.listeners.click(click('toggle-log-start-page'));
+ assert.match(app.innerHTML,/id="log-starting-page"/);
+ await app.listeners.input({target:{id:'log-starting-page',value:'140'}});
+ await app.listeners.input({target:{id:'log-ending-page',value:'155'}});
+ await app.listeners.click(click('save-log'));
+ const data=stored();
+ const row=data.sessions.find(s=>s.user_book_id==='demo-a-b0'&&s.end_page===155);
+ assert.equal(row.start_page,140);
+ assert.equal(row.pages_read,15);
+ assert.equal(data.books.find(b=>b.id==='demo-a-b0').current_page,155);
+ assert.match(app.innerHTML,/id="log-page-start-label">page 155/);
+});
