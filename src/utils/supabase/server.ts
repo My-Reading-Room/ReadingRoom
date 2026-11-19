@@ -3,6 +3,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 import { supabasePublishableKey, supabaseUrl } from "./env";
 
@@ -11,6 +12,9 @@ import { supabasePublishableKey, supabaseUrl } from "./env";
  * Create a new client per request; never cache or share one between users.
  */
 export async function createClient() {
+  // Per-user data is never prerendered. Also needed because auth checks read
+  // Date.now(), which Cache Components rejects in its runtime prefetch pass.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(supabaseUrl, supabasePublishableKey, {
