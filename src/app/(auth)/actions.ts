@@ -7,7 +7,16 @@ import { safeRedirectPath } from "@/utils/safe-redirect";
 import { siteUrl } from "@/utils/supabase/env";
 import { createClient } from "@/utils/supabase/server";
 
-export type AuthFormState = { error?: string; message?: string };
+export type AuthFormState = {
+  error?: string;
+  message?: string;
+  /** Non-secret values to refill after a failed submit (never passwords). */
+  values?: Record<string, string>;
+};
+
+function keep(formData: FormData, ...names: string[]): Record<string, string> {
+  return Object.fromEntries(names.map((name) => [name, String(formData.get(name) ?? "")]));
+}
 
 const signInSchema = z.object({
   email: z.email().max(320),
@@ -26,7 +35,9 @@ const signUpSchema = z.object({
 
 export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = signInSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Enter your email and password." };
+  if (!parsed.success) {
+    return { error: "Enter your email and password.", values: keep(formData, "email") };
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -36,14 +47,24 @@ export async function signIn(_prev: AuthFormState, formData: FormData): Promise<
 
   // Same message for unknown email and wrong password, so the form can't be
   // used to discover which addresses have accounts.
-  if (error) return { error: "Incorrect email or password, or the email isn't confirmed yet." };
+  if (error) {
+    return {
+      error: "Incorrect email or password, or the email isn't confirmed yet.",
+      values: keep(formData, "email"),
+    };
+  }
 
   redirect(safeRedirectPath(parsed.data.next));
 }
 
 export async function signUp(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = signUpSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form." };
+  if (!parsed.success) {
+    return {
+      error: parsed.error.issues[0]?.message ?? "Check the form.",
+      values: keep(formData, "displayName", "email"),
+    };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -55,7 +76,12 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
     },
   });
 
-  if (error) return { error: "Could not create the account. Try again in a moment." };
+  if (error) {
+    return {
+      error: "Could not create the account. Try again in a moment.",
+      values: keep(formData, "displayName", "email"),
+    };
+  }
   if (data.session) redirect("/");
 
   return { message: "Check your email for a link to confirm your account." };

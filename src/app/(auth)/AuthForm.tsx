@@ -35,6 +35,7 @@ export function AuthForm({ action, fields, submitLabel, hidden = {} }: AuthFormP
             name={field.name}
             type={field.type}
             autoComplete={field.autoComplete}
+            defaultValue={field.type === "password" ? undefined : state.values?.[field.name]}
             required
           />
         </div>
