@@ -1,0 +1,32 @@
+/* My Reading Room — shared application design tokens (ported from legacy/design-tokens.css).
+   Modify this file for foundation-level colors, typography and spacing.
+   Fonts are self-hosted with next/font in src/app/layout.tsx; see docs/DESIGN_SYSTEM.md. */
+:root {
+  --color-text: #263d31;
+  --color-background: #f6f6f0;
+  --color-surface: #fffefa;
+  --color-primary: #2d5941;
+  --color-primary-dark: #234532;
+  --color-primary-light: #edf4eb;
+  --color-border: #e3e8df;
+  --color-muted: #78887d;
+  --color-accent: #bf955b;
+  --color-danger: #a75751;
+  --color-chart-reading: #568468;
+  --color-chart-audiobook: #557fa0;
+  --color-chart-combined: #b28a56;
+  --color-chart-tbr: #628c71;
+  --color-chart-speed: #8572a1;
+  --font-body: var(--font-dm-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: var(--font-newsreader), 'Newsreader', Georgia, serif;
+  --radius-control: 9px;
+  --radius-card: 15px;
+  --radius-chip: 10px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+}
