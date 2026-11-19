@@ -22,6 +22,24 @@ npm run dev                  # http://localhost:3000
 | `npm run typecheck` | Generate route types, then `tsc --noEmit` |
 | `npm run test:legacy` | Test suite of the legacy app |
 
+## Database (Supabase)
+
+`supabase/migrations/` is the source of truth for the schema. The first migration is a baseline
+captured from production on 2026-11-18. The SQL files in `legacy/supabase/` are history only.
+
+Requires Docker Desktop running and the [Supabase CLI](https://supabase.com/docs/guides/cli).
+
+```bash
+supabase start          # local Postgres + Auth in Docker, applies all migrations
+supabase db reset       # rebuild the local database from migrations
+npm run db:types        # regenerate src/types/database.ts from the local database
+supabase stop           # shut the local stack down
+```
+
+Schema changes go in a new migration (`supabase migration new <name>`), are tested locally with
+`supabase db reset`, and reach production only after review. Never edit production by hand in the
+dashboard SQL editor.
+
 ## Project layout
 
 ```

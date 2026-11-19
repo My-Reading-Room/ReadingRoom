@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:legacy": "npm --prefix legacy test"
+    "test:legacy": "npm --prefix legacy test",
+    "db:types": "supabase gen types --lang typescript --schema public > src/types/database.ts && prettier --write src/types/database.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -25,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "prettier": "^3.10.1",
     "typescript": "^5"
   },
   "description": "Personal reading tracker with shared, view-only partner profiles.",

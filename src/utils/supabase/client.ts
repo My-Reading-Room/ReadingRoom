@@ -1,5 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+import type { Database } from "@/types/database";
+
 import { supabasePublishableKey, supabaseUrl } from "./env";
 
 /**
@@ -8,5 +10,5 @@ import { supabasePublishableKey, supabaseUrl } from "./env";
  * Prefer the useSupabase() hook inside components.
  */
 export function createClient() {
-  return createBrowserClient(supabaseUrl, supabasePublishableKey);
+  return createBrowserClient<Database>(supabaseUrl, supabasePublishableKey);
 }
