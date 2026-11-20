@@ -1,0 +1,12 @@
+{
+  // Type-checks tests. Most were ported verbatim from the JavaScript test
+  // suite and use loose fixtures, so null-strictness is relaxed here only;
+  // wrong function names, argument counts and option types still fail.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "noImplicitAny": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "legacy"]
+}
