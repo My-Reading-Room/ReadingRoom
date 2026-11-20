@@ -51,6 +51,13 @@ describe("production CSP", () => {
   test("images do not allow arbitrary https hosts", () => {
     expect(p["img-src"]).not.toContain("https:");
     expect(p["img-src"]).not.toContain("*");
+    expect(p["img-src"].filter((h) => h.includes("*"))).toEqual(["https://*.us.archive.org"]);
+  });
+
+  test("Open Library cover redirects (archive.org storage) are allowed", () => {
+    expect(p["img-src"]).toEqual(
+      expect.arrayContaining(["https://archive.org", "https://*.us.archive.org"]),
+    );
   });
 });
 

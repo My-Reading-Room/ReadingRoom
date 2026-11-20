@@ -20,6 +20,10 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
             reading <em>room.</em>
           </strong>
         </Link>
+        <nav className="top-nav" aria-label="Main">
+          <Link href="/">Home</Link>
+          <Link href="/library">My Library</Link>
+        </nav>
         <div className="top-actions">
           <Suspense>
             <SignedInAs />

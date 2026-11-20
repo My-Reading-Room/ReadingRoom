@@ -4,6 +4,7 @@ import { connection } from "next/server";
 
 import "./design-tokens.css";
 import "./globals.css";
+import "./components.css";
 
 const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
 const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"] });

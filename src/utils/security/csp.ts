@@ -1,3 +1,5 @@
+import { COVER_HOSTS, COVER_REDIRECT_HOSTS } from "@/lib/cover-hosts";
+
 /**
  * Content Security Policy for every HTML response (#8).
  *
@@ -6,13 +8,6 @@
  * Anything injected into the page (XSS) has no nonce and is blocked, which
  * matters because @supabase/ssr auth cookies are readable from JavaScript.
  */
-
-/** Hosts book covers may load from until the cover proxy lands (#9). */
-const COVER_HOSTS = [
-  "https://covers.openlibrary.org",
-  "https://books.google.com",
-  "https://books.googleusercontent.com",
-];
 
 export function createNonce(): string {
   const bytes = new Uint8Array(16);
@@ -39,7 +34,7 @@ export function buildCsp(
     "style-src": ["'self'", isDev ? "'unsafe-inline'" : `'nonce-${nonce}'`],
     // React style={{...}} attributes. These cannot run script; tags still need the nonce.
     "style-src-attr": ["'unsafe-inline'"],
-    "img-src": ["'self'", "data:", "blob:", ...COVER_HOSTS],
+    "img-src": ["'self'", "data:", "blob:", ...COVER_HOSTS, ...COVER_REDIRECT_HOSTS],
     "font-src": ["'self'"],
     "connect-src": ["'self'", supabase.origin, supabaseWs],
     "object-src": ["'none'"],

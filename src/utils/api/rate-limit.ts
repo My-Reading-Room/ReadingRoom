@@ -10,7 +10,8 @@ type Window = { start: number; count: number };
 const windows = new Map<string, Window>();
 const MAX_KEYS = 10_000;
 
-export type RateLimitResult = { ok: true } | { ok: false; retryAfterSeconds: number };
+/** retryAfterSeconds is 0 when the request is allowed. */
+export type RateLimitResult = { ok: boolean; retryAfterSeconds: number };
 
 export function rateLimit(
   key: string,
@@ -25,7 +26,7 @@ export function rateLimit(
     }
   }
   entry.count++;
-  if (entry.count <= limit) return { ok: true };
+  if (entry.count <= limit) return { ok: true, retryAfterSeconds: 0 };
   return {
     ok: false,
     retryAfterSeconds: Math.max(1, Math.ceil((entry.start + windowMs - now) / 1000)),
