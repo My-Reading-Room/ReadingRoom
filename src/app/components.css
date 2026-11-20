@@ -1370,6 +1370,60 @@
   color: #76897b;
 }
 
+/* Add books (legacy) */
+.result-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 10px;
+  margin-bottom: 9px;
+  background: white;
+}
+.result-row:hover {
+  border-color: #8bb196;
+  background: #fbfdf9;
+}
+.result-row .cover {
+  width: 48px;
+}
+.result-title {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.result-desc {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.result-list {
+  max-height: 460px;
+  overflow: auto;
+  margin-top: 12px;
+}
+.result-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.add-search-input {
+  flex: 1;
+  min-width: 160px;
+}
+.isbn-camera {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;

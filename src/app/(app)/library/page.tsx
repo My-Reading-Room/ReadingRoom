@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { getOwnLibrary } from "@/data/library";
@@ -19,6 +20,9 @@ async function Library() {
             {books.length} books · {favorites} favorites · Your personal catalog
           </p>
         </div>
+        <Link href="/library/add" className="btn primary">
+          + Add books
+        </Link>
       </div>
       <LibraryView books={books} />
     </>
