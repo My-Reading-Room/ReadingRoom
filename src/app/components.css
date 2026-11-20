@@ -1313,6 +1313,12 @@
 .log-book-search {
   margin-bottom: 8px;
 }
+.page-progress-source {
+  margin: 7px 0 4px;
+  color: var(--color-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
 .page-progress-source strong {
   color: var(--color-text, #263d31);
 }
