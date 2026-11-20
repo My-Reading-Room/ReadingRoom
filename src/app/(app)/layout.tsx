@@ -16,18 +16,17 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
     <div className="app-shell">
       <TimeZoneCookie />
       <header className="topbar">
-        <Link className="brand" href="/">
+        <Link className="brand" href="/insights">
           <Image src="/icon.svg" alt="" width={34} height={34} />
           <strong>
             reading <em>room.</em>
           </strong>
         </Link>
         <nav className="top-nav" aria-label="Main">
-          <Link href="/">Home</Link>
-          <Link href="/library">My Library</Link>
-          <Link href="/log">Log Reading</Link>
           <Link href="/insights">Insights</Link>
           <Link href="/recaps">Replay</Link>
+          <Link href="/library">My Library</Link>
+          <Link href="/log">Log Reading</Link>
           <Link href="/settings">Settings</Link>
         </nav>
         <div className="top-actions">

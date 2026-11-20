@@ -12,6 +12,15 @@
   --color-muted: #78887d;
   --color-accent: #bf955b;
   --color-danger: #a75751;
+  /* Short aliases used by the legacy stylesheet (legacy/style.css :root). */
+  --green: var(--color-primary);
+  --dark: var(--color-primary-dark);
+  --light: var(--color-primary-light);
+  --line: var(--color-border);
+  --muted: var(--color-muted);
+  --paper: var(--color-surface);
+  --gold: var(--color-accent);
+  --red: var(--color-danger);
   --color-chart-reading: #568468;
   --color-chart-audiobook: #557fa0;
   --color-chart-combined: #b28a56;

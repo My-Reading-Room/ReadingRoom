@@ -19,6 +19,7 @@ export type InsightsData = {
   profile: ProfileInput | null;
   /** Only the owner may change goals. */
   editable: boolean;
+  ownerId: string;
 };
 
 /**
@@ -58,5 +59,6 @@ export async function getInsightsData(ownerId?: string): Promise<InsightsData> {
     goalHistory: history.data ?? [],
     profile: profile.data,
     editable: owner === claims.sub,
+    ownerId: owner,
   };
 }
