@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { LogoutButton } from "@/components/LogoutButton";
+import { TimeZoneCookie } from "@/components/TimeZoneCookie";
 import { requireUser } from "@/utils/supabase/server";
 
 async function SignedInAs() {
@@ -13,6 +14,7 @@ async function SignedInAs() {
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="app-shell">
+      <TimeZoneCookie />
       <header className="topbar">
         <Link className="brand" href="/">
           <Image src="/icon.svg" alt="" width={34} height={34} />
@@ -23,6 +25,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
         <nav className="top-nav" aria-label="Main">
           <Link href="/">Home</Link>
           <Link href="/library">My Library</Link>
+          <Link href="/log">Log Reading</Link>
         </nav>
         <div className="top-actions">
           <Suspense>

@@ -1127,6 +1127,243 @@
   padding-left: 20px;
 }
 
+/* Log Reading (legacy) */
+.btn.text {
+  border: 0;
+  background: transparent;
+  padding: 5px;
+  min-height: 0;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.kpi {
+  background: #eef4ec;
+  border: 1px solid #e0ebe0;
+  border-radius: 13px;
+  padding: 18px;
+  min-width: 0;
+}
+.kpi-num {
+  font:
+    500 30px/1.06 "Newsreader",
+    Georgia,
+    serif;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+.kpi-label {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #708677;
+}
+.log-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 15px 0;
+}
+.method {
+  border: 1px solid #d8e2d5;
+  border-radius: 10px;
+  padding: 13px;
+  text-align: left;
+  background: white;
+  color: #7d8c7f;
+  font-weight: 750;
+}
+.method.active {
+  background: #e9f4e8;
+  border-color: #90b79b;
+  color: #2f5e41;
+}
+.method .desc {
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f0f5ec;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 14px 0;
+}
+.timer strong {
+  font:
+    26px "Newsreader",
+    Georgia,
+    serif;
+}
+.timer .inline {
+  gap: 5px;
+}
+.session-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+}
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+.session-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.session-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.session-count {
+  color: #4d715b;
+  font-size: 11px;
+  font-weight: 750;
+}
+.session-breakdown {
+  background: #f4f7f2;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 9px 0;
+}
+.log-methods {
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+}
+.clock-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.clock-top > div > strong {
+  font-size: 14px;
+}
+.clock-modes {
+  display: inline-flex;
+  gap: 4px;
+  margin: 4px 0 13px;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.clock-modes .seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+}
+.clock-duration {
+  margin-bottom: 12px;
+}
+.clock-duration > .input {
+  max-width: 118px;
+}
+.clock-duration > .inline {
+  gap: 5px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.clock-face {
+  display: block;
+  font:
+    500 clamp(35px, 6vw, 57px)/1.2 "Newsreader",
+    Georgia,
+    serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  color: #2d5840;
+  margin: 5px 0 15px;
+}
+.clock-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.clock-actions button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  justify-content: center;
+}
+.reading-clock > p {
+  margin-top: 13px;
+  line-height: 1.6;
+}
+.log-book-tools .btn {
+  white-space: normal;
+  text-align: center;
+  min-height: 36px;
+}
+.log-book-search {
+  margin-bottom: 8px;
+}
+.page-progress-source strong {
+  color: var(--color-text, #263d31);
+}
+.page-progress-result {
+  background: var(--color-primary-light, #edf4eb);
+  color: var(--color-primary, #2d5941);
+  border-radius: 8px;
+  padding: 9px 10px;
+  margin: 8px 0 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.page-progress-result.invalid {
+  background: #fff0ee;
+  color: var(--color-danger, #a75751);
+}
+.page-start-toggle {
+  padding: 5px 0;
+  font-size: 10px;
+  min-height: 26px;
+  text-align: left;
+}
+.log-grid {
+  align-items: start;
+}
+.log-form .formfield {
+  margin-top: 12px;
+}
+.log-time {
+  max-width: 190px;
+}
+.readout {
+  background: #f2f6ef;
+}
+.log-kpis {
+  grid-template-columns: repeat(2, 1fr);
+  margin: 17px 0;
+}
+.log-filter {
+  margin: 11px 0;
+}
+.session-book {
+  align-items: flex-start;
+}
+.session-line {
+  margin-top: 7px;
+  font-size: 10px;
+  color: #76897b;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;
@@ -1253,6 +1490,9 @@
 }
 
 @media (max-width: 640px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
   .formgrid {
     grid-template-columns: 1fr;
   }
