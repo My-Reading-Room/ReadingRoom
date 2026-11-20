@@ -25,6 +25,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
         <nav className="top-nav" aria-label="Main">
           <Link href="/insights">Insights</Link>
           <Link href="/recaps">Replay</Link>
+          <Link href="/friends">Friends</Link>
           <Link href="/library">My Library</Link>
           <Link href="/log">Log Reading</Link>
           <Link href="/shelf">Bookshelf</Link>

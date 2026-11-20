@@ -44,6 +44,8 @@ export type ComparisonPeriod = {
   today: IsoDate;
   year?: number | string;
   mode?: "week" | "month" | "year";
+  /** Display label for the period (legacy comparisonPeriod()). */
+  label?: string;
 };
 
 type Dataset = {

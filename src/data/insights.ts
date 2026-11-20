@@ -52,13 +52,15 @@ export async function getInsightsData(ownerId?: string): Promise<InsightsData> {
       .eq("id", owner)
       .maybeSingle(),
   ]);
+  const editable = owner === claims.sub;
   return {
-    books,
+    // Personal notes stay private even under a Full share (legacy never showed them to friends).
+    books: editable ? books : books.map((b) => ({ ...b, notes: "" })),
     sessions,
     goals: goals.data ?? [],
     goalHistory: history.data ?? [],
     profile: profile.data,
-    editable: owner === claims.sub,
+    editable,
     ownerId: owner,
   };
 }
