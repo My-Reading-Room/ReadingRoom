@@ -1,0 +1,42 @@
+import type { Tables } from "@/types/database";
+
+/** Local calendar date, YYYY-MM-DD. Never a UTC instant. */
+export type IsoDate = string;
+
+export type UserBook = Tables<"user_books">;
+export type ReadingSession = Tables<"reading_sessions">;
+export type Profile = Tables<"profiles">;
+
+/**
+ * Domain functions validate every field at runtime: form values arrive as
+ * strings, and imported or legacy rows can have missing or null fields. Inputs
+ * are therefore loose (optional, nullable, numbers may be numeric strings),
+ * and real database rows are always assignable to them.
+ */
+type Loose<T> = {
+  [K in keyof T]?: NonNullable<T[K]> extends number ? T[K] | string | null : T[K] | null;
+};
+
+export type BookInput = Loose<UserBook>;
+export type SessionInput = Loose<ReadingSession>;
+export type ProfileInput = Loose<Profile>;
+
+export type BookStatus = "tbr" | "reading" | "finished" | "dnf";
+export type ActivityMode = "reading" | "audiobook" | "read_listen";
+
+export type GoalHistoryRow = {
+  effective_date: IsoDate;
+  target_minutes: number;
+  tracking_baseline?: boolean;
+};
+
+export type PassStatus = "reading" | "finished" | "dnf";
+
+/** One entry of user_books.read_history (an explicit reading pass). */
+export type ReadPass = {
+  number: number;
+  status: PassStatus;
+  started_on: IsoDate | null;
+  finished_on: IsoDate | null;
+  finished_year: number | null;
+};
