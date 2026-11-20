@@ -26,6 +26,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
           <Link href="/">Home</Link>
           <Link href="/library">My Library</Link>
           <Link href="/log">Log Reading</Link>
+          <Link href="/settings">Settings</Link>
         </nav>
         <div className="top-actions">
           <Suspense>

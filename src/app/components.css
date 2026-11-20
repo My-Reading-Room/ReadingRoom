@@ -1424,6 +1424,24 @@
   margin-top: 10px;
 }
 
+/* Settings */
+.narrow {
+  max-width: 230px;
+}
+.settings-row {
+  margin-top: 15px;
+}
+.share-row {
+  justify-content: space-between;
+}
+.share-level {
+  max-width: 178px;
+}
+.install-steps {
+  line-height: 1.85;
+  margin-top: 12px;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;
