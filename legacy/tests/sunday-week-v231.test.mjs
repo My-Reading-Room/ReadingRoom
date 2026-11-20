@@ -40,7 +40,7 @@ test('Sunday and Saturday sessions are included in this week; neighboring week e
 test('app and preview both use Sunday first and a PWA cache bump',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const habits=readFileSync(new URL('../reading-habits.js',import.meta.url),'utf8');
- const preview=readFileSync(new URL('../../PREVIEW_SITE/index.html',import.meta.url),'utf8');
+ const preview=readFileSync(new URL('../../docs/design/preview-site/index.html',import.meta.url),'utf8');
  const worker=readFileSync(new URL('../service-worker.js',import.meta.url),'utf8');
  assert.match(app,/weekStartSunday\(date\)/);
  assert.match(app,/weekStartSunday\(addDays\(today\(\),-77\)\)/);
