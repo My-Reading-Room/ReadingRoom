@@ -34,7 +34,12 @@ supabase start          # local Postgres + Auth in Docker, applies all migration
 supabase db reset       # rebuild the local database from migrations
 npm run db:types        # regenerate src/types/database.ts from the local database
 supabase stop           # shut the local stack down
+npm run dev:local       # run the app against the local stack (the default for development)
 ```
+
+Develop against the local stack. The hosted project holds real users' data; a separate hosted
+database for preview deployments is deferred (#23). Create local test users with
+`supabase status` → Studio, or the local Auth admin API.
 
 Schema changes go in a new migration (`supabase migration new <name>`), are tested locally with
 `supabase db reset`, and reach production only after review. Never edit production by hand in the

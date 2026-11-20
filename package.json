@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write src",
-    "format:check": "prettier --check src"
+    "format:check": "prettier --check src",
+    "dev:local": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH next dev"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
