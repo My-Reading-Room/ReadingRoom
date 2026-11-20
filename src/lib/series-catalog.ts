@@ -160,10 +160,10 @@ type SeriesFieldKey = "series_name" | "series_number" | "series_total";
 export function fillMissingSeriesFields<B extends BookInput>(
   book: B,
   lookup: SeriesLookup | null | undefined,
-): B | null {
+): (B & Partial<ProposedSeriesFields>) | null {
   const proposed = proposedSeriesFields(book, lookup);
   if (!proposed) return null;
-  const updated: B = { ...book };
+  const updated = { ...book } as B & Partial<ProposedSeriesFields>;
   const fields = updated as Record<
     SeriesFieldKey | "series_total_source" | "series_source_url",
     unknown
@@ -193,7 +193,11 @@ export function fillMissingSeriesFields<B extends BookInput>(
   return changed ? updated : null;
 }
 
-type Fetcher = (input: string, init?: RequestInit) => Promise<Response>;
+/** Minimal fetch contract, so callers and tests can inject a stub. */
+type Fetcher = (
+  input: string,
+  init?: RequestInit,
+) => Promise<{ ok: boolean; status?: number; json(): Promise<any> }>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export async function fetchSeriesLookup({
   series = "",
