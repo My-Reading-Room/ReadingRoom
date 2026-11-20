@@ -13,7 +13,9 @@ import { MetadataLookupCard } from "./MetadataLookupCard";
 import { SeriesLookupCard } from "./SeriesLookupCard";
 import { ReadHistoryCard, ReadingDaysCard, SpeedCard } from "./BookInsights";
 import { ReadHistoryEditor } from "./ReadHistoryEditor";
-import { readingPasses } from "@/lib/reading-history";
+import { RereadComparisonCard } from "@/components/RereadComparisonCard";
+import { readingPassMetrics, readingPasses } from "@/lib/reading-history";
+import { localToday } from "@/utils/local-today";
 
 export async function generateMetadata({ params }: PageProps<"/books/[id]">): Promise<Metadata> {
   const { book } = await getBookDetail((await params).id);
@@ -31,7 +33,8 @@ export default async function BookPage({ params, searchParams }: PageProps<"/boo
   const requested = (await searchParams).tab;
   const tab: Tab = TABS.includes(requested as Tab) ? (requested as Tab) : "details";
   const passCount = readingPasses(book).length;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = await localToday();
+  const passMetrics = readingPassMetrics(book, sessions, { today });
   const minutes = sessions.reduce(
     (n, s) => n + (s.duration_minutes > 0 ? s.duration_minutes : 0),
     0,
@@ -101,12 +104,25 @@ export default async function BookPage({ params, searchParams }: PageProps<"/boo
       {tab === "chapters" ? (
         <ChaptersTab book={book} chapters={chapters} editable={editable} />
       ) : tab === "history" ? (
-        <ReadHistoryEditor
-          key={book.updated_at}
-          book={book}
-          sessions={sessions}
-          editable={editable}
-        />
+        <>
+          {passMetrics.length > 1 && (
+            <div className="card soft reread-section">
+              <h3 className="small-title">Original vs reread · method &amp; time</h3>
+              <p className="section-sub">
+                Each reread is compared to your first pass using its own recorded sessions.
+              </p>
+              {passMetrics.slice(1).map((pass) => (
+                <RereadComparisonCard key={pass.number} original={passMetrics[0]} reread={pass} />
+              ))}
+            </div>
+          )}
+          <ReadHistoryEditor
+            key={book.updated_at}
+            book={book}
+            sessions={sessions}
+            editable={editable}
+          />
+        </>
       ) : editable ? (
         <>
           <BookActions
