@@ -1425,7 +1425,20 @@
 }
 
 /* Links styled as buttons (legacy only had <button>) */
-a.btn { text-decoration: none; }
+a.btn {
+  text-decoration: none;
+}
+
+/* Bookshelf */
+.shelf-controls .select {
+  width: auto;
+}
+.shelf-note {
+  margin: 17px 0;
+}
+.shelf-move-select {
+  max-width: 290px;
+}
 
 /* Settings */
 .narrow {
@@ -3882,6 +3895,208 @@ dialog.modal::backdrop {
 @media (prefers-reduced-motion: reduce) {
   .replay-ready-stars {
     animation: none;
+  }
+}
+
+/* Bookshelf (legacy) */
+.shelf-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.shelf-box {
+  --wood1: #986944;
+  --wood2: #63402d;
+  --wood3: #c39567;
+  background: linear-gradient(90deg, #00000006, #f6f0e710, #00000009);
+  border-left: 12px solid var(--wood2);
+  border-top: 11px solid var(--wood2);
+  border-right: 12px solid var(--wood2);
+  border-radius: 5px 5px 0 0;
+  padding: 0 8px;
+  box-shadow:
+    inset 8px 0 11px #0000000d,
+    inset -8px 0 11px #0000000c,
+    0 8px 20px #37251815;
+}
+.shelf-box.oak {
+  --wood1: #c4a07b;
+  --wood2: #957251;
+  --wood3: #e5c49e;
+}
+.shelf-box.slate {
+  --wood1: #5d6e73;
+  --wood2: #2f4046;
+  --wood3: #83969a;
+}
+.shelf-tier {
+  height: 185px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 6px;
+  padding: 15px 12px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.shelf-tier:after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  bottom: 0;
+  height: 17px;
+  background: linear-gradient(0deg, var(--wood2), var(--wood1) 65%, var(--wood3));
+  border-bottom: 3px solid var(--wood2);
+  box-shadow: 0 4px 7px #0004;
+  z-index: 3;
+}
+.shelf-book {
+  --thick: 17px;
+  position: relative;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-shrink: 0;
+  width: 77px;
+  height: 140px;
+  margin-right: var(--thick);
+  align-items: stretch;
+  cursor: pointer;
+  z-index: 2;
+  transform-origin: bottom center;
+  transition: translate 0.12s;
+}
+.shelf-book:hover {
+  translate: 0 -7px;
+}
+.shelf-book:after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--thick));
+  width: var(--thick);
+  top: 4px;
+  bottom: 1px;
+  background: repeating-linear-gradient(90deg, #c7b89b 0, #f8edd8 2px, #c4b89c 3px);
+  transform: skewY(-5deg);
+  box-shadow: 2px 2px 4px #0003;
+}
+.shelf-book .cover {
+  height: 100%;
+  width: 100%;
+  border-radius: 1px;
+  box-shadow:
+    inset 5px 0 9px #0003,
+    1px 3px 5px #0004;
+}
+.shelf-book .cover-title {
+  font-size: 12px;
+}
+.shelf-book.spine {
+  margin-right: 0;
+  width: var(--thick);
+  background: var(--book-color);
+  border-left: 3px solid #ffffff19;
+  border-right: 1px solid #0003;
+  box-shadow: 2px 1px 4px #0003;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+.shelf-book.spine:after {
+  display: none;
+}
+.spine-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--ink-color);
+  font:
+    600 10px "Newsreader",
+    Georgia,
+    serif;
+  white-space: nowrap;
+  max-height: 94%;
+  overflow: hidden;
+}
+.shelf-decor {
+  position: relative;
+  z-index: 2;
+  font-size: 35px;
+  flex-shrink: 0;
+  filter: drop-shadow(2px 3px 2px #0004);
+  line-height: 1.15;
+}
+.shelf-book.dragging {
+  opacity: 0.3;
+}
+.shelf-book.drop-target {
+  outline: 2px dashed #e2b468;
+  outline-offset: 3px;
+}
+.shelf-page-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 14px 0;
+  font-size: 11px;
+  color: #557362;
+  font-weight: 750;
+}
+.shelf-page-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+@media (max-width: 760px) {
+  .shelf-tier {
+    padding-left: 0;
+    padding-right: 0;
+    gap: 4px;
+    height: 167px;
+  }
+  .shelf-book {
+    width: 58px;
+    height: 124px;
+  }
+  .shelf-book .cover-title {
+    font-size: 10px;
+  }
+  .shelf-book .cover-author {
+    font-size: 7px;
+  }
+  .shelf-decor {
+    font-size: 27px;
+  }
+}
+@media (max-width: 520px) {
+  .shelf-box {
+    border-left-width: 6px;
+    border-right-width: 6px;
+    padding: 0 3px;
+  }
+  .shelf-tier {
+    height: 144px;
+  }
+  .shelf-book {
+    width: 46px;
+    height: 105px;
+  }
+  .shelf-book .cover-title {
+    font-size: 8px;
+  }
+  .shelf-book .cover-author {
+    font-size: 5px;
+  }
+  .shelf-decor {
+    font-size: 24px;
+  }
+}
+@media (max-width: 430px) {
+  .shelf-page-controls {
+    gap: 8px;
   }
 }
 

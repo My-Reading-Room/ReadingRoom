@@ -8,7 +8,7 @@ import { fetchAllRows } from "./fetch-all";
 const BOOK_COLUMNS =
   "id,title,author,genres,status,rating,favorite,page_count,current_page,isbn,asin,publisher,binding," +
   "edition_year,original_published_year,goodreads_added_on,tbr_added_on,started_on,finished_on," +
-  "shelf_order,cover_url,series_name";
+  "shelf_order,cover_url,series_name,height_mm,thickness_mm";
 
 export type LibraryBook = {
   id: string;
@@ -33,17 +33,27 @@ export type LibraryBook = {
   shelf_order: number;
   cover_url: string | null;
   series_name: string | null;
+  height_mm: number | null;
+  thickness_mm: number | null;
   /** Activity modes the owner has logged for this book. */
   modes: ActivityMode[];
 };
 
-/**
- * The signed-in reader's own library. Filtering by user_id narrows to their
- * rows; RLS independently guarantees nobody else's private rows come back.
- */
+/** The signed-in reader's own library. */
 export async function getOwnLibrary(): Promise<LibraryBook[]> {
+  return (await getLibrary()).books;
+}
+
+/**
+ * One reader's library: the signed-in reader by default, or someone who shared
+ * a full profile with them. Filtering by user_id narrows to that reader's rows;
+ * RLS independently guarantees nobody else's private rows come back.
+ */
+export async function getLibrary(
+  ownerId?: string,
+): Promise<{ books: LibraryBook[]; editable: boolean }> {
   const { supabase, claims } = await requireUser();
-  const userId = claims.sub;
+  const userId = ownerId ?? claims.sub;
 
   const [books, sessions] = await Promise.all([
     fetchAllRows((from, to) =>
@@ -71,5 +81,12 @@ export async function getOwnLibrary(): Promise<LibraryBook[]> {
     if (!modes.has(s.user_book_id)) modes.set(s.user_book_id, new Set());
     modes.get(s.user_book_id)!.add((s.activity_mode || "reading") as ActivityMode);
   }
-  return books.map((b) => ({ ...b, genres: b.genres ?? [], modes: [...(modes.get(b.id) ?? [])] }));
+  return {
+    books: books.map((b) => ({
+      ...b,
+      genres: b.genres ?? [],
+      modes: [...(modes.get(b.id) ?? [])],
+    })),
+    editable: userId === claims.sub,
+  };
 }
