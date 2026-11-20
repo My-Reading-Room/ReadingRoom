@@ -1,8 +1,8 @@
 // Open Library / Google Books catalog and conservative Goodreads edition matching.
 // No guessed page counts: a match fills missing metadata but never overwrites known pages.
 //
-// SECURITY (#10): `googleKey` must only ever be supplied by server code (a Route
-// Handler reading a non-NEXT_PUBLIC env var). Never pass it from the browser.
+// SECURITY (#10): `googleKey` must only ever be supplied by server code (see
+// src/utils/catalog-server.ts). Never pass it from the browser.
 import type { BookInput } from "./types";
 
 const OPEN_LIBRARY = "https://openlibrary.org";
@@ -289,8 +289,6 @@ export function normalizeGenres(rawList: unknown): string[] {
 
 // Open Library requests during a large import are serialized to honor its
 // default one-request-per-second public API limit. Ordinary searches remain fast.
-// NOTE (#10): this pacing is module state. Once lookups run on our server,
-// it is shared by every user on that server instance.
 let catalogPaceMs = 0;
 let nextOpenLibraryAt = 0;
 let openLibraryQueue: Promise<void> = Promise.resolve();
@@ -300,25 +298,82 @@ export function setBulkCatalogPacing(milliseconds: number | string = 0): void {
   if (!catalogPaceMs) nextOpenLibraryAt = 0;
 }
 
+/**
+ * Server-side settings (#10). On our server every user shares one IP, so Open
+ * Library's per-IP limit applies to everyone: identify the app with a
+ * User-Agent (3 req/s instead of 1), pace every request, and cache responses
+ * as their usage guidelines ask. All off by default (plain browser/test use).
+ */
+export type CatalogConfig = {
+  /** e.g. "MyReadingRoom (contact@example.org)"; sent to Open Library only. */
+  userAgent: string | null;
+  /** Minimum gap between Open Library requests, for every caller. */
+  minIntervalMs: number;
+  /** How long successful JSON responses are reused; 0 disables the cache. */
+  cacheTtlMs: number;
+  cacheMaxEntries: number;
+};
+
+const DEFAULT_CONFIG: CatalogConfig = {
+  userAgent: null,
+  minIntervalMs: 0,
+  cacheTtlMs: 0,
+  cacheMaxEntries: 500,
+};
+let config: CatalogConfig = { ...DEFAULT_CONFIG };
+const responseCache = new Map<string, { expires: number; data: Raw }>();
+
+export function configureCatalog(next: Partial<CatalogConfig> | null): void {
+  config = next ? { ...config, ...next } : { ...DEFAULT_CONFIG };
+  responseCache.clear();
+}
+
+const isOpenLibrary = (url: string) => String(url).startsWith(OPEN_LIBRARY + "/");
+
 async function waitForOpenLibrary(url: string): Promise<void> {
-  if (!catalogPaceMs || !String(url).startsWith(OPEN_LIBRARY + "/")) return;
+  const pace = Math.max(catalogPaceMs, config.minIntervalMs);
+  if (!pace || !isOpenLibrary(url)) return;
   const turn = openLibraryQueue.then(async () => {
     const delay = Math.max(0, nextOpenLibraryAt - Date.now());
     if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
-    nextOpenLibraryAt = Date.now() + catalogPaceMs;
+    nextOpenLibraryAt = Date.now() + pace;
   });
   openLibraryQueue = turn.catch(() => {});
   await turn;
 }
 
+function cached(url: string): Raw | undefined {
+  if (!config.cacheTtlMs) return undefined;
+  const hit = responseCache.get(url);
+  if (!hit) return undefined;
+  responseCache.delete(url);
+  if (hit.expires <= Date.now()) return undefined;
+  responseCache.set(url, hit); // most recently used last
+  return hit.data;
+}
+
+function remember(url: string, data: Raw): void {
+  if (!config.cacheTtlMs) return;
+  responseCache.set(url, { expires: Date.now() + config.cacheTtlMs, data });
+  while (responseCache.size > config.cacheMaxEntries) {
+    responseCache.delete(responseCache.keys().next().value as string);
+  }
+}
+
 async function getJSON(url: string, timeout = 12000): Promise<Raw> {
+  const hit = cached(url);
+  if (hit !== undefined) return hit;
   await waitForOpenLibrary(url);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const headers =
+      config.userAgent && isOpenLibrary(url) ? { "User-Agent": config.userAgent } : undefined;
+    const response = await fetch(url, { signal: controller.signal, headers });
     if (!response.ok) throw new Error(`Catalog lookup failed (${response.status})`);
-    return await response.json();
+    const data = await response.json();
+    remember(url, data);
+    return data;
   } finally {
     clearTimeout(timer);
   }

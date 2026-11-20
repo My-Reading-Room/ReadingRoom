@@ -68,6 +68,9 @@ docs/               design system, legacy handoff notes, release notes, design r
   (`src/utils/security/csp.ts`): only scripts Next.js stamps with the per-request nonce can run,
   and inline event handlers are blocked. Because of this, every page renders per request and
   Cache Components / Partial Prerendering are off (static shells can't carry a nonce).
+- Third-party API keys (Google Books, List Of Books) live only in server env vars and are used
+  by the sign-in-only route handlers under `src/app/api/`, which validate input and rate-limit
+  per user. The browser never calls those providers directly.
 - Load third-party code from npm, never from a CDN `<script>`. New external hosts (images, APIs)
   must be added to the CSP deliberately. Set `CSP_REPORT_ONLY=true` to trial a policy change in
   report-only mode.
