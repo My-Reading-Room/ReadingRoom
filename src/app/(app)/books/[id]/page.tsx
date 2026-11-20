@@ -9,6 +9,8 @@ import { seriesMetadata } from "@/lib/series-insights";
 import { BookActions } from "./BookActions";
 import { BookEditForm } from "./BookEditForm";
 import { ChaptersTab } from "./ChaptersTab";
+import { MetadataLookupCard } from "./MetadataLookupCard";
+import { SeriesLookupCard } from "./SeriesLookupCard";
 import { ReadHistoryCard, ReadingDaysCard, SpeedCard } from "./BookInsights";
 import { ReadHistoryEditor } from "./ReadHistoryEditor";
 import { readingPasses } from "@/lib/reading-history";
@@ -113,6 +115,10 @@ export default async function BookPage({ params, searchParams }: PageProps<"/boo
             favorite={book.favorite}
             canReread={["finished", "dnf"].includes(book.status)}
           />
+          <div className="book-insights">
+            <MetadataLookupCard book={book} />
+            <SeriesLookupCard book={book} />
+          </div>
           <BookEditForm key={book.updated_at} book={book} />
         </>
       ) : (

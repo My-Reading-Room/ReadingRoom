@@ -1072,6 +1072,61 @@
   min-width: 31px;
 }
 
+/* Metadata lookup (legacy) */
+.metadata-lookup-card .cardhead {
+  margin: 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.metadata-lookup-card .section-sub {
+  max-width: 410px;
+}
+.metadata-lookup-results {
+  border-top: 1px solid #dbe8d7;
+  margin-top: 14px;
+  padding-top: 15px;
+}
+.lookup-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+  font-size: 13px;
+  color: #2e6044;
+}
+.lookup-result-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin: 13px 0;
+}
+.lookup-result-layout > div:last-child {
+  min-width: 0;
+  line-height: 1.8;
+}
+.lookup-cover-choice {
+  font-size: 12px;
+  font-weight: 700;
+  color: #41664e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.lookup-cover-choice input {
+  accent-color: #2d5941;
+  width: 17px;
+  height: 17px;
+}
+.lookup-buttons {
+  margin: 14px 0 0;
+}
+.series-order ol {
+  margin: 6px 0 10px;
+  padding-left: 20px;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;
