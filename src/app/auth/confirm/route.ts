@@ -4,7 +4,14 @@ import { type NextRequest, NextResponse } from "next/server";
 import { safeRedirectPath } from "@/utils/safe-redirect";
 import { createClient } from "@/utils/supabase/server";
 
-const OTP_TYPES: EmailOtpType[] = ["signup", "invite", "magiclink", "recovery", "email_change", "email"];
+const OTP_TYPES: EmailOtpType[] = [
+  "signup",
+  "invite",
+  "magiclink",
+  "recovery",
+  "email_change",
+  "email",
+];
 
 /**
  * Landing point for links in Supabase auth emails. Handles both the

@@ -22,13 +22,18 @@ async function LoginForm({ searchParams }: { searchParams: LoginSearchParams }) 
         </div>
       )}
       <AuthForm
-      action={signIn}
-      submitLabel="Sign in"
-      hidden={{ next: safeRedirectPath(next) }}
-      fields={[
-        { name: "email", label: "Email", type: "email", autoComplete: "email" },
-        { name: "password", label: "Password", type: "password", autoComplete: "current-password" },
-      ]}
+        action={signIn}
+        submitLabel="Sign in"
+        hidden={{ next: safeRedirectPath(next) }}
+        fields={[
+          { name: "email", label: "Email", type: "email", autoComplete: "email" },
+          {
+            name: "password",
+            label: "Password",
+            type: "password",
+            autoComplete: "current-password",
+          },
+        ]}
       />
     </>
   );

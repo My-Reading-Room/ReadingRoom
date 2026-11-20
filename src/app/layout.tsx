@@ -9,7 +9,8 @@ const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"
 
 export const metadata: Metadata = {
   title: { default: "My Reading Room", template: "%s · My Reading Room" },
-  description: "A private, shared reading room for books, reading sessions, and custom bookshelves.",
+  description:
+    "A private, shared reading room for books, reading sessions, and custom bookshelves.",
   icons: { icon: "/icon.svg", apple: "/icon-192.png" },
 };
 
