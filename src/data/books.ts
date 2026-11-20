@@ -2,6 +2,7 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
+import type { ChapterRow } from "@/lib/chapter-edits";
 import type { ReadingSession, UserBook } from "@/lib/types";
 import { requireUser } from "@/utils/supabase/server";
 
@@ -27,7 +28,7 @@ export type BookDetail = {
   /** Only the owner edits; a partner with a full share sees it read-only. */
   editable: boolean;
   sessions: BookSession[];
-  chapterCount: number;
+  chapters: ChapterRow[];
 };
 
 const isUuid = (value: string) =>
@@ -63,15 +64,11 @@ export async function getBookDetail(id: string): Promise<BookDetail> {
     ),
     supabase
       .from("chapter_boundaries")
-      .select("id", { count: "exact", head: true })
-      .eq("user_book_id", id),
+      .select("id,chapter_number,chapter_label,start_page,end_page")
+      .eq("user_book_id", id)
+      .order("chapter_number"),
   ]);
   if (chapters.error) throw new Error(chapters.error.message);
 
-  return {
-    book,
-    editable: book.user_id === claims.sub,
-    sessions,
-    chapterCount: chapters.count ?? 0,
-  };
+  return { book, editable: book.user_id === claims.sub, sessions, chapters: chapters.data ?? [] };
 }

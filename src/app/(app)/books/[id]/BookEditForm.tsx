@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
-
+import { useActionForm } from "@/hooks/useActionForm";
 import { useLocalToday } from "@/hooks/useLocalToday";
 import { STATUS_TEXT } from "@/lib/book-display";
 import { seriesMetadata } from "@/lib/series-insights";
@@ -37,7 +36,7 @@ function Field({ label, name, defaultValue, type = "text", wide, ...rest }: Fiel
 }
 
 export function BookEditForm({ book }: { book: UserBook }) {
-  const [state, action, pending] = useActionState<BookActionState, FormData>(
+  const { state, pending, onSubmit } = useActionForm<BookActionState>(
     saveBook.bind(null, book.id),
     {},
   );
@@ -45,7 +44,7 @@ export function BookEditForm({ book }: { book: UserBook }) {
   const series = seriesMetadata(book);
 
   return (
-    <form action={action} className="book-edit-form">
+    <form onSubmit={onSubmit} className="book-edit-form">
       <input type="hidden" name="today" value={today} />
       <section className="book-status-edit" aria-label="Edit reading status">
         <div className="book-status-main">

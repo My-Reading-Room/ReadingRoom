@@ -8,6 +8,7 @@ import { seriesMetadata } from "@/lib/series-insights";
 
 import { BookActions } from "./BookActions";
 import { BookEditForm } from "./BookEditForm";
+import { ChaptersTab } from "./ChaptersTab";
 import { ReadHistoryCard, ReadingDaysCard, SpeedCard } from "./BookInsights";
 import { ReadHistoryEditor } from "./ReadHistoryEditor";
 import { readingPasses } from "@/lib/reading-history";
@@ -20,11 +21,11 @@ export async function generateMetadata({ params }: PageProps<"/books/[id]">): Pr
 const formatMinutes = (minutes: number) =>
   minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`;
 
-const TABS = ["details", "history"] as const;
+const TABS = ["details", "chapters", "history"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function BookPage({ params, searchParams }: PageProps<"/books/[id]">) {
-  const { book, editable, sessions } = await getBookDetail((await params).id);
+  const { book, editable, sessions, chapters } = await getBookDetail((await params).id);
   const requested = (await searchParams).tab;
   const tab: Tab = TABS.includes(requested as Tab) ? (requested as Tab) : "details";
   const passCount = readingPasses(book).length;
@@ -86,12 +87,18 @@ export default async function BookPage({ params, searchParams }: PageProps<"/boo
             replace
             scroll={false}
           >
-            {id === "details" ? "Book details" : `Read history (${passCount})`}
+            {id === "details"
+              ? "Book details"
+              : id === "chapters"
+                ? `Exact chapters (${chapters.length})`
+                : `Read history (${passCount})`}
           </Link>
         ))}
       </nav>
 
-      {tab === "history" ? (
+      {tab === "chapters" ? (
+        <ChaptersTab book={book} chapters={chapters} editable={editable} />
+      ) : tab === "history" ? (
         <ReadHistoryEditor
           key={book.updated_at}
           book={book}

@@ -783,6 +783,227 @@
   margin-bottom: 16px;
 }
 
+/* Exact chapters tab (legacy) */
+.chapter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #e8ede6;
+  padding: 10px 0;
+  font-size: 12px;
+}
+.chapter-item strong {
+  font-size: 12px;
+}
+.chapter-item .small {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.chapter-source-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chapter-source-head .small-title {
+  margin: 0 0 5px;
+}
+.chapter-source-head .tiny {
+  line-height: 1.5;
+}
+.chapter-source-actions,
+.chapter-draft-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.chapter-source-actions .btn {
+  white-space: normal;
+  text-align: center;
+}
+.chapter-photo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 9px;
+  margin: 16px 0 7px;
+}
+.chapter-photo label {
+  width: 100%;
+  font-size: 11px;
+  font-weight: 800;
+  color: #526d59;
+}
+.chapter-photo .input {
+  min-width: 0;
+  flex: 1 1 230px;
+  width: auto;
+  max-width: 100%;
+  font-size: 11px;
+  padding: 8px;
+}
+.chapter-paste {
+  border-top: 1px solid #dbe5da;
+  margin-top: 13px;
+  padding-top: 11px;
+}
+.chapter-paste summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  color: #406747;
+  margin-bottom: 10px;
+}
+.chapter-paste .textarea {
+  min-height: 90px;
+  margin: 0 0 8px;
+}
+.chapter-sharing-results {
+  margin: 15px 0;
+  border-top: 1px solid #dbe5da;
+  padding-top: 13px;
+}
+.chapter-sharing-results h4,
+.chapter-candidate-heading h4 {
+  margin: 0 0 5px;
+  font-size: 13px;
+  color: #304c39;
+}
+.chapter-sharing-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #dfe8db;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+.chapter-sharing-result span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.chapter-sharing-result strong {
+  display: block;
+  font-size: 12px;
+}
+.chapter-sharing-result small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  color: #7b8a7c;
+}
+.chapter-candidate-card {
+  margin: 16px 0;
+  background: #fff;
+  border: 1px solid #cedbca;
+  border-radius: 12px;
+  padding: 13px;
+  min-width: 0;
+}
+.chapter-candidate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.chapter-candidate-heading .tiny {
+  line-height: 1.6;
+}
+.chapter-count {
+  font-size: 10px;
+  white-space: nowrap;
+  background: #e7f0e5;
+  border-radius: 10px;
+  padding: 5px 8px;
+  color: #3c6545;
+}
+.chapter-draft-header,
+.chapter-candidate-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 0.9fr) minmax(0, 0.9fr) 35px;
+  gap: 8px;
+  align-items: center;
+}
+.chapter-draft-header {
+  font-size: 10px;
+  font-weight: 800;
+  color: #829085;
+  padding: 5px 0 7px;
+}
+.chapter-candidate-row {
+  border-top: 1px solid #e6ebe3;
+  padding: 8px 0;
+}
+.chapter-candidate-row .input {
+  padding: 7px 8px;
+  font-size: 11px;
+  min-height: 36px;
+  min-width: 0;
+}
+.chapter-draft-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.chapter-row-number {
+  font-size: 10px;
+  color: #839385;
+  min-width: 14px;
+  text-align: center;
+}
+.chapter-draft-actions {
+  margin: 11px 0 18px;
+}
+.chapter-confirmation {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f4f8f2;
+  padding: 11px;
+  border-radius: 10px;
+  color: #3b6244;
+  font-size: 11px;
+  line-height: 1.6;
+  cursor: pointer;
+}
+.chapter-confirmation input {
+  margin-top: 3px;
+  accent-color: #3d704f;
+  flex-shrink: 0;
+}
+.chapter-save-all {
+  margin-top: 12px;
+  width: 100%;
+}
+.chapter-share-existing {
+  margin: 16px 0 0;
+  border-top: 1px solid #dbe5da;
+  padding-top: 15px;
+}
+.chapter-share-existing strong {
+  font-size: 12px;
+}
+.chapter-share-existing .tiny {
+  margin: 6px 0 11px;
+  line-height: 1.6;
+}
+.chapter-list {
+  margin: 12px 0 18px;
+}
+.chapter-source-panel {
+  margin-top: 16px;
+}
+.chapter-share-existing {
+  margin-top: 16px;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;
