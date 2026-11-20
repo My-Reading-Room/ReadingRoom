@@ -1004,6 +1004,74 @@
   margin-top: 16px;
 }
 
+/* Contents photo scanner (legacy) */
+.chapter-camera-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+.chapter-photo-queue {
+  min-width: 0;
+  margin: 7px 0 13px;
+}
+.chapter-photo-queue > .tiny {
+  line-height: 1.6;
+}
+.chapter-photo-list {
+  list-style: none;
+  margin: 9px 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.chapter-photo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #dae5d8;
+  padding: 8px;
+  border-radius: 10px;
+  min-width: 0;
+}
+.chapter-photo-item > img {
+  width: 43px;
+  height: 53px;
+  object-fit: cover;
+  border: 1px solid #e0e6db;
+  border-radius: 5px;
+  flex: none;
+}
+.chapter-photo-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.chapter-photo-name strong {
+  font-size: 11px;
+  color: #355741;
+}
+.chapter-photo-name span {
+  font-size: 10px;
+  color: #7e8e80;
+  overflow-wrap: anywhere;
+}
+.chapter-photo-controls {
+  display: flex;
+  gap: 5px;
+  flex: none;
+}
+.chapter-photo-controls .btn {
+  min-height: 31px;
+  min-width: 31px;
+}
+
 /* Legacy rules declared with combined selectors in style.css */
 .status-pill.activity-reading {
   background: #e9f3e6;

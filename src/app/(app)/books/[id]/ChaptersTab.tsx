@@ -13,6 +13,7 @@ import {
 import type { UserBook } from "@/lib/types";
 
 import type { BookActionState } from "./actions";
+import { ContentsPhotoScanner } from "./ContentsPhotoScanner";
 import {
   deleteChapter,
   findOpenLibraryChapters,
@@ -164,6 +165,17 @@ export function ChaptersTab({ book, chapters, editable }: Props) {
               community matches.
             </div>
           )}
+
+          <ContentsPhotoScanner
+            onDraft={(d) => {
+              draft.install(d);
+              found(d.rows.length);
+            }}
+            onError={(text) => {
+              setLast("source");
+              setNotice({ text, error: true });
+            }}
+          />
 
           <details className="chapter-paste">
             <summary>Paste the table of contents</summary>

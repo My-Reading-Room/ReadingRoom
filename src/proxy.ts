@@ -20,6 +20,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Everything except static assets and image optimization.
-    "/((?!_next/static|_next/image|favicon.ico|icon.svg|icon-192.png|icon-512.png|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // tesseract/ is the self-hosted OCR worker, its WebAssembly and language data:
+    // static files that must not inherit the page CSP (it would block WebAssembly).
+    "/((?!_next/static|_next/image|tesseract/|favicon.ico|icon.svg|icon-192.png|icon-512.png|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

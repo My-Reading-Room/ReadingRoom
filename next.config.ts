@@ -31,7 +31,21 @@ const nextConfig: NextConfig = {
   // cannot carry the per-request CSP nonce, so their scripts would be blocked
   // (see src/utils/security/csp.ts). Every page here is per-user anyway.
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      {
+        // The self-hosted OCR worker (#8) skips the page proxy, so give it its own
+        // strict policy: code, WebAssembly and data only from this origin.
+        source: "/tesseract/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; worker-src 'self'",
+          },
+        ],
+      },
+    ];
   },
 };
 
