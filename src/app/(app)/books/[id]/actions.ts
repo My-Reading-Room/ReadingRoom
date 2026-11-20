@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { applyBookEdits, type BookEditForm } from "@/lib/book-edits";
+import { planReadHistorySave } from "@/lib/read-history-plan";
 import { beginReread } from "@/lib/reading-history";
 import type { UserBook } from "@/lib/types";
 import { clientToday } from "@/utils/client-date";
@@ -167,4 +168,86 @@ export async function deleteBook(id: string): Promise<BookActionState> {
   if (error) return { error: "Could not delete the book." };
   revalidatePath("/library");
   redirect("/library");
+}
+
+const passEntries = z
+  .array(
+    z.object({
+      status: z.enum(["reading", "finished", "dnf"]),
+      started_on: z.string().max(10).default(""),
+      finished_on: z.string().max(10).default(""),
+      finished_year: z.string().max(4).default(""),
+    }),
+  )
+  .min(1)
+  .max(500);
+
+/**
+ * Save edited read-throughs (or only recheck session assignments). The plan is
+ * recomputed here from fresh rows; the browser's preview is never trusted.
+ */
+export async function saveReadHistory(
+  id: string,
+  _prev: BookActionState,
+  formData: FormData,
+): Promise<BookActionState> {
+  const owned = await ownBook(id);
+  if (!owned) return { error: "Only the owner can edit reading history." };
+  const assignmentOnly = formData.get("mode") === "recheck";
+  let entries = null;
+  if (!assignmentOnly) {
+    let raw: unknown;
+    try {
+      raw = JSON.parse(String(formData.get("entries") ?? ""));
+    } catch {
+      return { error: "Reading history could not be read. Reload and try again." };
+    }
+    const parsed = passEntries.safeParse(raw);
+    if (!parsed.success) return { error: "Check the status and dates of each read-through." };
+    entries = parsed.data;
+  }
+
+  const { data: sessions, error: sessionsError } = await owned.supabase
+    .from("reading_sessions")
+    .select("id,user_book_id,session_date,read_number")
+    .eq("user_book_id", owned.book.id)
+    .eq("user_id", owned.userId);
+  if (sessionsError) return { error: "Could not load this book's sessions." };
+
+  const plan = planReadHistorySave(owned.book, sessions ?? [], entries, {
+    reassign: formData.get("reassign") === "on",
+    assignmentOnly,
+  });
+  if ("error" in plan) return { error: plan.error };
+
+  if (!assignmentOnly) {
+    const { error } = await owned.supabase
+      .from("user_books")
+      .update(pick(plan.book as UserBook))
+      .eq("id", owned.book.id)
+      .eq("user_id", owned.userId);
+    if (error) return { error: "Could not save reading history." };
+  }
+  let moved = 0;
+  for (const move of plan.corrections) {
+    // Only the pass number changes; time, pages, mode, notes and dates stay as logged.
+    const { error } = await owned.supabase
+      .from("reading_sessions")
+      .update({ read_number: move.to })
+      .eq("id", move.session.id)
+      .eq("user_id", owned.userId);
+    if (error) {
+      revalidatePath(`/books/${owned.book.id}`);
+      return {
+        error: `Reading history saved but only ${moved} of ${plan.corrections.length} session moves completed. Use "Recheck saved session assignments" to retry.`,
+      };
+    }
+    moved++;
+  }
+  revalidatePath(`/books/${owned.book.id}`);
+  revalidatePath("/library");
+  const verb = assignmentOnly ? "checked" : "saved";
+  return {
+    message: `Reading history ${verb}${moved ? `; ${moved} saved session${moved === 1 ? "" : "s"} moved into the appropriate reread` : ""}.`,
+  };
 }

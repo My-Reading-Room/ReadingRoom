@@ -9,6 +9,8 @@ import { seriesMetadata } from "@/lib/series-insights";
 import { BookActions } from "./BookActions";
 import { BookEditForm } from "./BookEditForm";
 import { ReadHistoryCard, ReadingDaysCard, SpeedCard } from "./BookInsights";
+import { ReadHistoryEditor } from "./ReadHistoryEditor";
+import { readingPasses } from "@/lib/reading-history";
 
 export async function generateMetadata({ params }: PageProps<"/books/[id]">): Promise<Metadata> {
   const { book } = await getBookDetail((await params).id);
@@ -18,8 +20,14 @@ export async function generateMetadata({ params }: PageProps<"/books/[id]">): Pr
 const formatMinutes = (minutes: number) =>
   minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`;
 
-export default async function BookPage({ params }: PageProps<"/books/[id]">) {
+const TABS = ["details", "history"] as const;
+type Tab = (typeof TABS)[number];
+
+export default async function BookPage({ params, searchParams }: PageProps<"/books/[id]">) {
   const { book, editable, sessions } = await getBookDetail((await params).id);
+  const requested = (await searchParams).tab;
+  const tab: Tab = TABS.includes(requested as Tab) ? (requested as Tab) : "details";
+  const passCount = readingPasses(book).length;
   const today = new Date().toISOString().slice(0, 10);
   const minutes = sessions.reduce(
     (n, s) => n + (s.duration_minutes > 0 ? s.duration_minutes : 0),
@@ -68,7 +76,29 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
         </div>
       </div>
 
-      {editable ? (
+      <nav className="segmented book-tabs" aria-label="Book sections">
+        {TABS.map((id) => (
+          <Link
+            key={id}
+            href={id === "details" ? `/books/${book.id}` : `/books/${book.id}?tab=${id}`}
+            className={`seg-btn ${tab === id ? "active" : ""}`}
+            aria-current={tab === id ? "page" : undefined}
+            replace
+            scroll={false}
+          >
+            {id === "details" ? "Book details" : `Read history (${passCount})`}
+          </Link>
+        ))}
+      </nav>
+
+      {tab === "history" ? (
+        <ReadHistoryEditor
+          key={book.updated_at}
+          book={book}
+          sessions={sessions}
+          editable={editable}
+        />
+      ) : editable ? (
         <>
           <BookActions
             bookId={book.id}
@@ -103,11 +133,13 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
         </section>
       )}
 
-      <div className="book-insights">
-        <ReadHistoryCard book={book} />
-        <ReadingDaysCard book={book} sessions={sessions} today={today} />
-        <SpeedCard sessions={sessions} />
-      </div>
+      {tab === "details" && (
+        <div className="book-insights">
+          <ReadHistoryCard book={book} />
+          <ReadingDaysCard book={book} sessions={sessions} today={today} />
+          <SpeedCard sessions={sessions} />
+        </div>
+      )}
     </article>
   );
 }
