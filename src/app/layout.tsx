@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Newsreader } from "next/font/google";
+import { connection } from "next/server";
 
 import "./design-tokens.css";
 import "./globals.css";
@@ -21,7 +22,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Render every page per request. A prerendered static page would carry no
+  // CSP nonce and its scripts would be blocked (src/utils/security/csp.ts).
+  await connection();
   return (
     <html lang="en" className={`${dmSans.variable} ${newsreader.variable}`}>
       <body>{children}</body>

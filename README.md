@@ -64,6 +64,13 @@ docs/               design system, legacy handoff notes, release notes, design r
 - Never use `"use cache"` on data read with the user's cookies.
 - Redirect targets from user input go through `safeRedirectPath()`.
 - No `dangerouslySetInnerHTML` (enforced by ESLint).
+- Every HTML response gets a nonce-based Content-Security-Policy from `src/proxy.ts`
+  (`src/utils/security/csp.ts`): only scripts Next.js stamps with the per-request nonce can run,
+  and inline event handlers are blocked. Because of this, every page renders per request and
+  Cache Components / Partial Prerendering are off (static shells can't carry a nonce).
+- Load third-party code from npm, never from a CDN `<script>`. New external hosts (images, APIs)
+  must be added to the CSP deliberately. Set `CSP_REPORT_ONLY=true` to trial a policy change in
+  report-only mode.
 
 ## Contributing
 
