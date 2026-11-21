@@ -8,11 +8,10 @@ import {
   mergeReviewedMetadata,
   type MetadataLookup,
 } from "@/lib/book-detail-metadata";
-import { fillMissingSeriesFields, normalizeSeriesResult } from "@/lib/series-catalog";
 import { seriesMetadata } from "@/lib/series-insights";
 import type { UserBook } from "@/lib/types";
 import { catalogServer } from "@/utils/catalog-server";
-import { serverEnv } from "@/utils/server-env";
+import { lookupSeriesOnServer, seriesChanges } from "@/utils/series-catalog-server";
 import { requireUser } from "@/utils/supabase/server";
 
 import type { BookActionState } from "./actions";
@@ -130,30 +129,17 @@ export async function applyMetadata(
 export async function applySeriesDetails(id: string): Promise<BookActionState> {
   const owned = await ownBook(id);
   if (!owned) return { error: "Only the owner can edit series details." };
-  const key = serverEnv.listOfBooksApiKey();
-  if (!key) return { error: "Series catalog lookup is not configured." };
   const name = seriesMetadata(owned.book).series_name;
-  const params = new URLSearchParams(
+  const details = await lookupSeriesOnServer(
     name ? { series: name } : { title: owned.book.title, author: owned.book.author },
   );
-  const path = name ? "get-reading-order" : "find-series-for-book";
-  const res = await fetch(`https://www.listofbooks.net/api/public/v1/${path}?${params}`, {
-    headers: { Authorization: `Bearer ${key}`, Accept: "application/json" },
-    signal: AbortSignal.timeout(8500),
-  }).catch(() => null);
-  if (!res?.ok) return { error: "Series catalog is temporarily unavailable." };
-  const data = await res.json().catch(() => ({}));
-  const updated = fillMissingSeriesFields(owned.book, normalizeSeriesResult(data?.results?.[0]));
-  if (!updated) return { message: "No missing series fields to fill." };
+  if (details === "unconfigured") return { error: "Series catalog lookup is not configured." };
+  if (!details) return { error: "Series catalog is temporarily unavailable." };
+  const changes = seriesChanges(owned.book, details);
+  if (!changes) return { message: "No missing series fields to fill." };
   const { error } = await owned.supabase
     .from("user_books")
-    .update({
-      series_name: updated.series_name,
-      series_number: updated.series_number,
-      series_total: updated.series_total,
-      series_total_source: updated.series_total_source,
-      series_source_url: updated.series_source_url,
-    })
+    .update(changes)
     .eq("id", owned.book.id)
     .eq("user_id", owned.userId);
   if (error) return { error: "Could not save series details." };

@@ -7,6 +7,7 @@ import { seriesMetadata } from "@/lib/series-insights";
 import type { UserBook } from "@/lib/types";
 
 import { saveBook, type BookActionState } from "./actions";
+import { CoverPreview } from "./CoverPreview";
 import { GenrePicker } from "./GenrePicker";
 
 const RATINGS = Array.from({ length: 20 }, (_, i) => (i + 1) / 4);
@@ -126,6 +127,9 @@ export function BookEditForm({ book }: { book: UserBook }) {
           defaultValue={book.cover_url}
           placeholder="https://example.com/cover.jpg"
         />
+        <div className="formfield span2">
+          <CoverPreview />
+        </div>
         <Field label="Publisher" name="publisher" defaultValue={book.publisher} maxLength={200} />
         <Field
           label="Binding"

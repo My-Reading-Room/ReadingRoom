@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import { dailyGoalForYear } from "@/lib/insights-period";
+import { catalogSeriesMatch, seriesKey } from "@/lib/series-catalog";
+import { seriesMetadata } from "@/lib/series-insights";
+import { rateLimit } from "@/utils/api/rate-limit";
+import { lookupSeriesOnServer, seriesChanges } from "@/utils/series-catalog-server";
 import { clientToday } from "@/utils/client-date";
 import { requireUser } from "@/utils/supabase/server";
 
@@ -57,5 +61,47 @@ export async function saveDailyGoal(_prev: GoalState, formData: FormData): Promi
   revalidatePath("/insights");
   return {
     message: "Daily reading-time goal saved from today forward. Earlier dates stay unchanged.",
+  };
+}
+
+/**
+ * Fill blank series totals for every book in one of the reader's series
+ * (legacy "Fill missing series totals in my library"). The lookup runs here;
+ * the result must match the series name and author before anything changes.
+ */
+export async function fillSeriesGroup(name: string): Promise<GoalState> {
+  const seriesName = String(name ?? "").trim();
+  if (!seriesName || seriesName.length > 200) return { error: "Choose a series." };
+  const { supabase, claims } = await requireUser();
+  const limited = rateLimit(`series-group:${claims.sub}`, { limit: 20, windowMs: 60 * 60_000 });
+  if (!limited.ok) return { error: "Too many series lookups. Try again later." };
+  const { data: books } = await supabase.from("user_books").select("*").eq("user_id", claims.sub);
+  const members = (books ?? []).filter(
+    (b) => seriesKey(seriesMetadata(b).series_name) === seriesKey(seriesName),
+  );
+  if (!members.length) return { error: "That series isn't in your library." };
+  const details = await lookupSeriesOnServer({ series: seriesName });
+  if (details === "unconfigured") return { error: "Series catalog lookup is not configured yet." };
+  if (!details || !catalogSeriesMatch(details, { seriesName, author: members[0].author })) {
+    return {
+      error: "The catalog did not return an exact series and author match. Nothing was changed.",
+    };
+  }
+  let saved = 0;
+  for (const book of members) {
+    const changes = seriesChanges(book, details);
+    if (!changes) continue;
+    const { error } = await supabase
+      .from("user_books")
+      .update(changes)
+      .eq("id", book.id)
+      .eq("user_id", claims.sub);
+    if (!error) saved++;
+  }
+  revalidatePath("/insights");
+  return {
+    message: saved
+      ? `Saved missing series information on ${saved} book${saved === 1 ? "" : "s"}.`
+      : "No missing series fields to fill.",
   };
 }

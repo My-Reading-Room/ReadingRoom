@@ -26,6 +26,8 @@ export type InsightsContext = {
   dailyGoalForYear: (year: number) => number;
   bookById: Map<string, UserBook>;
   openDrill: (kind: string, value: string, label: string) => void;
+  /** The signed-in reader is looking at their own data. */
+  editable: boolean;
 };
 
 export const MODE_TEXT = {

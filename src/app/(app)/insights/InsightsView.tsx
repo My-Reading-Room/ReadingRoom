@@ -95,6 +95,7 @@ export function InsightsView({ data, today }: { data: InsightsData; today: IsoDa
       dailyGoalForYear: goalForYear,
       bookById: new Map(data.books.map((b) => [b.id, b])),
       openDrill: (kind, value, label) => setDrill({ kind, value, label }),
+      editable: data.editable,
     };
   }, [data, today, period, year, bookFilter, mode, metric]);
 

@@ -1540,6 +1540,19 @@ a.btn.primary {
   }
 }
 
+/* Cover URL preview */
+.cover-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cover-preview img {
+  height: 96px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px #2843311f;
+}
+
 /* Settings */
 .narrow {
   max-width: 230px;

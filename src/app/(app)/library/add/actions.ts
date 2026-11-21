@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 
 import {
@@ -10,7 +11,9 @@ import {
   type AddResult,
   type ManualBookInput,
 } from "@/lib/book-add";
+import { seriesMetadata } from "@/lib/series-insights";
 import { clientToday } from "@/utils/client-date";
+import { lookupSeriesOnServer, seriesChanges } from "@/utils/series-catalog-server";
 import { requireUser } from "@/utils/supabase/server";
 
 export type AddState = { error?: string };
@@ -64,7 +67,35 @@ async function insertAndOpen(
   const { error } = await ctx.supabase.from("user_books").insert(result.book);
   if (error) return { error: "Could not add the book. Try again." };
   revalidatePath("/library");
-  redirect(`/books/${result.book.id}?added=1`);
+  // Legacy enrichOneSeriesOnAdd: once the response is sent, fill blank series
+  // fields from List Of Books (when configured). Adding never waits on it.
+  const { id } = result.book;
+  after(async () => {
+    try {
+      const { data: book } = await ctx.supabase
+        .from("user_books")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", ctx.userId)
+        .single();
+      if (!book) return;
+      const name = seriesMetadata(book).series_name;
+      const details = await lookupSeriesOnServer(
+        name ? { series: name } : { title: book.title, author: book.author },
+      );
+      if (!details || details === "unconfigured") return;
+      const changes = seriesChanges(book, details);
+      if (changes)
+        await ctx.supabase
+          .from("user_books")
+          .update(changes)
+          .eq("id", id)
+          .eq("user_id", ctx.userId);
+    } catch {
+      // The book is already added; series details can be looked up later.
+    }
+  });
+  redirect(`/books/${id}?added=1`);
 }
 
 export async function addCatalogBook(_prev: AddState, formData: FormData): Promise<AddState> {

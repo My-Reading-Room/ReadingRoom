@@ -26,6 +26,7 @@ import { seriesStatistics } from "@/lib/series-insights";
 import { tbrTransitions } from "@/lib/tbr-transitions";
 
 import { Bar, HabitKpi, SpeedTrend } from "./charts";
+import { FillSeriesButton } from "./FillSeriesButton";
 import { MODE_COLORS, MODE_TEXT, SPEED_COLORS, SPEED_KEYS, type InsightsContext } from "./context";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -943,9 +944,9 @@ export function LibrarySection({ ctx }: { ctx: InsightsContext }) {
                   </div>
                 ))}
               </div>
+              {ctx.editable && <FillSeriesButton name={x.name} />}
               <p className="tiny">
-                To look up the complete series, open a book in it and use Series lookup on its
-                Details tab.
+                Totals are only filled where blank; manually entered totals are never overwritten.
               </p>
             </details>
           ))
