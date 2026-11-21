@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans, Newsreader } from "next/font/google";
 import { connection } from "next/server";
 
+import { ServiceWorker } from "@/components/ServiceWorker";
+
 import "./design-tokens.css";
 import "./globals.css";
 import "./components.css";
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
   description:
     "A private, shared reading room for books, reading sessions, and custom bookshelves.",
   icons: { icon: "/icon.svg", apple: "/icon-192.png" },
+  appleWebApp: { capable: true, title: "Reading Room", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -29,7 +32,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   await connection();
   return (
     <html lang="en" className={`${dmSans.variable} ${newsreader.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorker />
+      </body>
     </html>
   );
 }
