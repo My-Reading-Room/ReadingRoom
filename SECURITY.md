@@ -5,9 +5,9 @@ very welcome.
 
 ## Reporting a vulnerability
 
-Please **do not open a public issue**. Use GitHub's private reporting instead:
-**Security → Report a vulnerability** on this repository. Only the maintainers
-can see the report.
+Please **do not open a public issue**. Contact the maintainers directly and
+privately. (GitHub's private vulnerability reporting will be enabled if the
+repository becomes public.)
 
 Include what you found, how to reproduce it, and what an attacker could do.
 We aim to reply within a week.
