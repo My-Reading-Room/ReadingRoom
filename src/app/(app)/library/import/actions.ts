@@ -4,13 +4,16 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { fetchAllRows } from "@/data/fetch-all";
+import { enrichBookMetadata } from "@/lib/catalog";
 import { allowedCoverUrl } from "@/lib/cover-hosts";
 import { isValidISBN, normalizeISBN } from "@/lib/book-detail-metadata";
 import { prepareGoodreadsImport } from "@/lib/goodreads-import";
 import { ENRICH_BATCH, IMPORT_BATCH } from "@/lib/import-limits";
 import {
+  applyTrustedMetadata,
   ENRICH_FIELDS,
   enrichAfterGoodreadsImport,
+  metadataChanged,
   needsImportEnrichment,
 } from "@/lib/import-enrichment";
 import type { UserBook } from "@/lib/types";
@@ -249,4 +252,82 @@ export async function enrichBooks(ids: unknown): Promise<EnrichResult> {
     unresolved: result.unresolved,
     errors: result.errors,
   };
+}
+
+export type BulkMode = "editions" | "genres";
+
+/** Book ids for a bulk catalog action: books without an edition, or the whole library. */
+export async function booksForBulk(mode: BulkMode): Promise<string[]> {
+  const { books } = await ownBooks();
+  return (mode === "editions" ? books.filter((b) => !b.edition_key) : books).map((b) => b.id);
+}
+
+/**
+ * Legacy "Match editions" (fill blank edition details where the catalogs agree
+ * on several fields) and "Refresh genres" (replace genres with the catalog's
+ * standardized ones; covers and everything else untouched).
+ */
+export async function bulkCatalogUpdate(ids: unknown, mode: unknown): Promise<EnrichResult> {
+  const parsed = z.array(z.guid()).min(1).max(ENRICH_BATCH).safeParse(ids);
+  const kind = z.enum(["editions", "genres"]).safeParse(mode);
+  if (!parsed.success || !kind.success) return { error: "Choose books to look up." };
+  const { supabase, claims } = await requireUser();
+  const limited = rateLimit(`enrich:${claims.sub}`, { limit: 150, windowMs: 60 * 60_000 });
+  if (!limited.ok)
+    return {
+      error:
+        "Metadata lookups are paused for a while to respect the catalogs’ limits. Try again later.",
+    };
+  const { data: books } = await supabase
+    .from("user_books")
+    .select("*")
+    .eq("user_id", claims.sub)
+    .in("id", parsed.data);
+  const result = { saved: 0, genreFilled: 0, editionMatched: 0, unresolved: 0, errors: 0 };
+  const { googleKey } = catalogServer();
+  for (const book of books ?? []) {
+    try {
+      let changes: Partial<UserBook> | null = null;
+      if (kind.data === "editions") {
+        const lookup = await enrichBookMetadata(book, googleKey, {
+          preserveCover: true,
+          matchEdition: true,
+        });
+        const updated = applyTrustedMetadata(book, lookup);
+        if (metadataChanged(book, updated)) {
+          changes = Object.fromEntries(
+            ENRICH_FIELDS.map((k) => [k, updated[k] ?? null]),
+          ) as Partial<UserBook>;
+          changes.cover_url = allowedCoverUrl(changes.cover_url) ?? null;
+          if (!book.edition_key && updated.edition_key) result.editionMatched++;
+        }
+        if (!updated.edition_key) result.unresolved++;
+      } else {
+        const lookup = await enrichBookMetadata(book, googleKey, {
+          preserveCover: true,
+          forceGenres: true,
+        });
+        if (
+          lookup.genres?.length &&
+          JSON.stringify(lookup.genres) !== JSON.stringify(book.genres ?? [])
+        ) {
+          changes = { genres: lookup.genres, work_key: lookup.work_key || book.work_key };
+          result.genreFilled++;
+        } else if (!lookup.genres?.length) result.unresolved++;
+      }
+      if (changes) {
+        const { error } = await supabase
+          .from("user_books")
+          .update(changes)
+          .eq("id", book.id)
+          .eq("user_id", claims.sub);
+        if (error) throw error;
+        result.saved++;
+      }
+    } catch {
+      result.errors++;
+    }
+  }
+  revalidatePath("/library");
+  return result;
 }
