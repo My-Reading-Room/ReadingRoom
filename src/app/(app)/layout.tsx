@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AppNav } from "@/components/AppNav";
 import { LogoutButton } from "@/components/LogoutButton";
 import { TimeZoneCookie } from "@/components/TimeZoneCookie";
 import { requireUser } from "@/utils/supabase/server";
@@ -22,15 +23,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
             reading <em>room.</em>
           </strong>
         </Link>
-        <nav className="top-nav" aria-label="Main">
-          <Link href="/insights">Insights</Link>
-          <Link href="/recaps">Replay</Link>
-          <Link href="/friends">Friends</Link>
-          <Link href="/library">My Library</Link>
-          <Link href="/log">Log Reading</Link>
-          <Link href="/shelf">Bookshelf</Link>
-          <Link href="/settings">Settings</Link>
-        </nav>
+        <AppNav />
         <div className="top-actions">
           <Suspense>
             <SignedInAs />
