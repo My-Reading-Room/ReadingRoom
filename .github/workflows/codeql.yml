@@ -1,4 +1,7 @@
 # Code scanning (#14): JavaScript/TypeScript and the workflow files themselves.
+# Code scanning on a *private* repo needs GitHub Code Security, which the
+# organization's free plan doesn't include, so this only runs once the repo is
+# public (or the plan changes: then remove the `if:` below).
 name: CodeQL
 
 on:
@@ -15,6 +18,7 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

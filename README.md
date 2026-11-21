@@ -92,7 +92,7 @@ Every PR into `develop` or `main` runs CI (`.github/workflows/ci.yml`):
 | Lint, types, tests, build    | Prettier, ESLint, TypeScript, Vitest, the legacy tests, `next build`                                                      |
 | Migrations from scratch      | Starts a fresh local Supabase, applies every migration and the seed, `supabase db lint`, pgTAP tests in `supabase/tests/` |
 | Secrets and dependency audit | gitleaks over the full history (`.gitleaks.toml`), `npm audit` on production dependencies                                 |
-| CodeQL                       | Security analysis of the TypeScript and the workflows                                                                     |
+| CodeQL                       | Security analysis of the TypeScript and the workflows (runs only while the repo is public; see the workflow)              |
 
 Run the same checks locally before pushing:
 
