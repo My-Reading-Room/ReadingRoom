@@ -14,13 +14,13 @@ cp .env.example .env.local   # fill in values from Supabase → Project Settings
 npm run dev                  # http://localhost:3000
 ```
 
-| Script | What it does |
-|---|---|
-| `npm run dev` | Dev server |
-| `npm run build` / `npm start` | Production build / serve |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | Generate route types, then `tsc --noEmit` |
-| `npm run test:legacy` | Test suite of the legacy app |
+| Script                        | What it does                              |
+| ----------------------------- | ----------------------------------------- |
+| `npm run dev`                 | Dev server                                |
+| `npm run build` / `npm start` | Production build / serve                  |
+| `npm run lint`                | ESLint                                    |
+| `npm run typecheck`           | Generate route types, then `tsc --noEmit` |
+| `npm run test:legacy`         | Test suite of the legacy app              |
 
 ## Database (Supabase)
 
@@ -82,4 +82,24 @@ docs/               design system, legacy handoff notes, release notes, design r
 
 ## Contributing
 
-Branch from `develop` and open PRs against `develop`. `main` is production.
+**Branch flow:** feature branch → PR into `develop` → release PR from `develop` into `main`.
+`main` is production; never push to it directly.
+
+Every PR into `develop` or `main` runs CI (`.github/workflows/ci.yml`):
+
+| Job                          | What it checks                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Lint, types, tests, build    | Prettier, ESLint, TypeScript, Vitest, the legacy tests, `next build`                                                      |
+| Migrations from scratch      | Starts a fresh local Supabase, applies every migration and the seed, `supabase db lint`, pgTAP tests in `supabase/tests/` |
+| Secrets and dependency audit | gitleaks over the full history (`.gitleaks.toml`), `npm audit` on production dependencies                                 |
+| CodeQL                       | Security analysis of the TypeScript and the workflows                                                                     |
+
+Run the same checks locally before pushing:
+
+```bash
+npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:legacy
+supabase db reset && supabase db lint --fail-on error   # needs Docker
+```
+
+Dependabot opens grouped weekly updates against `develop`. Security problems:
+see [SECURITY.md](SECURITY.md).
