@@ -295,7 +295,9 @@ let openLibraryQueue: Promise<void> = Promise.resolve();
 
 export function setBulkCatalogPacing(milliseconds: number | string = 0): void {
   catalogPaceMs = Math.max(0, Number(milliseconds) || 0);
-  if (!catalogPaceMs) nextOpenLibraryAt = 0;
+  // Keep the next slot when the server's own pacing (configureCatalog) still
+  // applies; otherwise one reader's import ending would let a burst through.
+  if (!catalogPaceMs && !config.minIntervalMs) nextOpenLibraryAt = 0;
 }
 
 /**

@@ -1448,6 +1448,21 @@ a.btn.primary {
   max-width: 290px;
 }
 
+/* Goodreads import and metadata fill */
+.library-tools {
+  margin-top: 21px;
+}
+.fill-status {
+  flex-basis: 100%;
+}
+.fill-progress {
+  margin: 10px 0;
+}
+.import-preview {
+  max-height: 230px;
+  overflow: auto;
+}
+
 /* Settings */
 .narrow {
   max-width: 230px;
@@ -5379,6 +5394,16 @@ dialog.modal::backdrop {
     flex-basis: 25px;
     min-width: 25px;
   }
+}
+
+/* Import (legacy) */
+.notice.error {
+  background: #fff0ee;
+  color: #9e5650;
+  border-color: #f0d0ca;
+}
+.toast.error {
+  background: #a4504b;
 }
 
 /* Legacy rules declared with combined selectors in style.css */

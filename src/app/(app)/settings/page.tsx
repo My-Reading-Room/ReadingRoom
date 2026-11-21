@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { LogoutButton } from "@/components/LogoutButton";
 import { getSettingsData } from "@/data/settings";
@@ -96,9 +97,12 @@ export default async function SettingsPage() {
 
       <div className="grid2 settings-row">
         <section className="card">
-          <h2 className="section-title">Backup</h2>
+          <h2 className="section-title">Import and backup</h2>
           <p className="section-sub">Your own reading records are yours to export.</p>
           <div className="toolbar form-footer">
+            <Link className="btn" href="/library/import">
+              ⇧ Import Goodreads CSV
+            </Link>
             <a className="btn" href="/api/export?format=json" download>
               ⇩ Export my data (JSON)
             </a>

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { getOwnLibrary } from "@/data/library";
 
+import { FillMetadataButton } from "./FillMetadataButton";
 import { LibraryView } from "./LibraryView";
 
 export const metadata: Metadata = { title: "My Library" };
@@ -25,6 +26,12 @@ async function Library() {
         </Link>
       </div>
       <LibraryView books={books} />
+      <div className="toolbar library-tools">
+        <Link className="btn" href="/library/import">
+          ⇧ Import Goodreads CSV / JSON
+        </Link>
+        <FillMetadataButton />
+      </div>
     </>
   );
 }

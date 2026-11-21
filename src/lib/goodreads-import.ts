@@ -327,3 +327,63 @@ export function prepareGoodreadsImport<E extends BookInput>(
   }
   return { additions, updates, all, skipped, existing: all.length - additions.length };
 }
+
+const isoPrefix = (v: unknown): IsoDate | null => {
+  const m = String(v || "")
+    .trim()
+    .match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : null;
+};
+
+/** Goodreads reading_sessions.json → reading passes per normalized title (legacy parseGoodreadsReadingSessions). */
+export function parseGoodreadsReadingSessions(text: string): Record<string, ImportedPass[]> {
+  const raw: unknown = JSON.parse(text);
+  if (!Array.isArray(raw)) throw new Error("Expected a JSON array in reading_sessions.json.");
+  const byTitle: Record<string, ImportedPass[]> = {};
+  for (const item of raw) {
+    if (!item || typeof item !== "object" || !item.book) continue;
+    const key = normTitle(item.book);
+    const start = isoPrefix(item.started_at),
+      end = isoPrefix(item.ended_at);
+    const state = String(item.state || "").toUpperCase();
+    if (!key || (!start && !end && !state)) continue;
+    (byTitle[key] ||= []).push({
+      status: state === "COMPLETED" ? "finished" : state === "READING" ? "reading" : "dnf",
+      started_on: start,
+      finished_on: state === "COMPLETED" ? end : null,
+    });
+  }
+  for (const passes of Object.values(byTitle)) {
+    passes.sort((a, b) =>
+      (a.finished_on || a.started_on || "9999-99-99").localeCompare(
+        b.finished_on || b.started_on || "9999-99-99",
+      ),
+    );
+  }
+  return byTitle;
+}
+
+/** Goodreads genre_recommendation.json → genre tags per normalized title (legacy parseGoodreadsGenreRecommendations). */
+export function parseGoodreadsGenreRecommendations(text: string): Record<string, string[]> {
+  const raw: unknown = JSON.parse(text);
+  if (!Array.isArray(raw)) throw new Error("Expected a JSON array in genre_recommendation.json.");
+  const map: Record<string, string[]> = {};
+  const add = (title: unknown, genre: unknown) => {
+    const key = normTitle(title);
+    const g = String(genre || "")
+      .trim()
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    if (!key || !g) return;
+    map[key] ||= [];
+    if (!map[key].includes(g)) map[key].push(g);
+  };
+  for (const item of raw) {
+    if (!item || typeof item !== "object" || !item.genre) continue;
+    if (Array.isArray(item.recommended_because_you_added)) {
+      for (const src of item.recommended_because_you_added) add(src, item.genre);
+    }
+    if (item.book) add(item.book, item.genre);
+  }
+  return map;
+}
