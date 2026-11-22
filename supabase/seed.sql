@@ -1,11 +1,12 @@
--- LOCAL DEVELOPMENT SEED ONLY. Applied by `supabase db reset` / `supabase start`
--- to the local Docker stack; never run against a hosted project.
+-- TEST DATA ONLY. Applied by `supabase db reset` / `supabase start` to the
+-- local Docker stack, and loaded once into the ReadingRoomDev project that backs
+-- Vercel preview deployments (#23). Never run it against production.
 --
 -- Three readers, mirroring how sharing works in production:
 --   reader@example.test   you          (sign in with this one)
 --   partner@example.test  shares a FULL profile with you
 --   friend@example.test   shares a SUMMARY-only profile with you
--- Password for all three: reading-room-local
+-- Sign-in details: ask a maintainer (not documented here).
 --
 -- Books and sessions come from the legacy app's demo data (legacy/db.js).
 
