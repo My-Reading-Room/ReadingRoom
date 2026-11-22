@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // The vanilla-JS app being replaced; it has its own tests (npm run test:legacy).
     "legacy/**",
+    // Self-hosted tesseract.js build output (scripts/copy-tesseract.mjs).
+    "public/tesseract/**",
   ]),
   {
     rules: {

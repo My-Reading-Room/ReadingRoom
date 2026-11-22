@@ -27,10 +27,7 @@ const signInSchema = z.object({
 const signUpSchema = z.object({
   displayName: z.string().trim().min(1, "Enter a display name.").max(60),
   email: z.email("Enter a valid email address.").max(320),
-  password: z
-    .string()
-    .min(8, "Use at least 8 characters.")
-    .max(256, "Use at most 256 characters."),
+  password: z.string().min(8, "Use at least 8 characters.").max(256, "Use at most 256 characters."),
 });
 
 export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {

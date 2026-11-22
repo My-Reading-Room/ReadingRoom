@@ -34,7 +34,12 @@ supabase start          # local Postgres + Auth in Docker, applies all migration
 supabase db reset       # rebuild the local database from migrations
 npm run db:types        # regenerate src/types/database.ts from the local database
 supabase stop           # shut the local stack down
+npm run dev:local       # run the app against the local stack (the default for development)
 ```
+
+Develop against the local stack. The hosted project holds real users' data; a separate hosted
+database for preview deployments is deferred (#23). Create local test users with
+`supabase status` → Studio, or the local Auth admin API.
 
 Schema changes go in a new migration (`supabase migration new <name>`), are tested locally with
 `supabase db reset`, and reach production only after review. Never edit production by hand in the
@@ -64,6 +69,16 @@ docs/               design system, legacy handoff notes, release notes, design r
 - Never use `"use cache"` on data read with the user's cookies.
 - Redirect targets from user input go through `safeRedirectPath()`.
 - No `dangerouslySetInnerHTML` (enforced by ESLint).
+- Every HTML response gets a nonce-based Content-Security-Policy from `src/proxy.ts`
+  (`src/utils/security/csp.ts`): only scripts Next.js stamps with the per-request nonce can run,
+  and inline event handlers are blocked. Because of this, every page renders per request and
+  Cache Components / Partial Prerendering are off (static shells can't carry a nonce).
+- Third-party API keys (Google Books, List Of Books) live only in server env vars and are used
+  by the sign-in-only route handlers under `src/app/api/`, which validate input and rate-limit
+  per user. The browser never calls those providers directly.
+- Load third-party code from npm, never from a CDN `<script>`. New external hosts (images, APIs)
+  must be added to the CSP deliberately. Set `CSP_REPORT_ONLY=true` to trial a policy change in
+  report-only mode.
 
 ## Contributing
 

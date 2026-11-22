@@ -12,13 +12,23 @@
   --color-muted: #78887d;
   --color-accent: #bf955b;
   --color-danger: #a75751;
+  /* Short aliases used by the legacy stylesheet (legacy/style.css :root). */
+  --green: var(--color-primary);
+  --dark: var(--color-primary-dark);
+  --light: var(--color-primary-light);
+  --line: var(--color-border);
+  --muted: var(--color-muted);
+  --paper: var(--color-surface);
+  --gold: var(--color-accent);
+  --red: var(--color-danger);
   --color-chart-reading: #568468;
   --color-chart-audiobook: #557fa0;
   --color-chart-combined: #b28a56;
   --color-chart-tbr: #628c71;
   --color-chart-speed: #8572a1;
-  --font-body: var(--font-dm-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: var(--font-newsreader), 'Newsreader', Georgia, serif;
+  --font-body:
+    var(--font-dm-sans), "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-newsreader), "Newsreader", Georgia, serif;
   --radius-control: 9px;
   --radius-card: 15px;
   --radius-chip: 10px;

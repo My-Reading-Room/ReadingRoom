@@ -45,6 +45,14 @@ export async function updateSession(request: NextRequest) {
   const signedIn = Boolean(data?.claims);
   const { pathname } = request.nextUrl;
 
+  if (!signedIn && pathname.startsWith("/api/")) {
+    // APIs answer with a status code, not an HTML redirect to the sign-in page.
+    return NextResponse.json(
+      { code: "unauthorized", message: "Sign in to use this API." },
+      { status: 401, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
   if (!signedIn && !isPublicPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
