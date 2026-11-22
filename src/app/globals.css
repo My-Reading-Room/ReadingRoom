@@ -1,0 +1,271 @@
+/* Base and shared component styles, ported from legacy/style.css.
+   Only what the current routes use is here; port more as routes move over (#12). */
+
+:root {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 310px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+img {
+  max-width: 100%;
+}
+
+/* App shell */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  min-height: 74px;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 34px;
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--color-primary-dark);
+}
+
+.brand img {
+  border-radius: var(--radius-control);
+}
+
+.brand strong {
+  font: 600 22px/1 var(--font-heading);
+  letter-spacing: -0.45px;
+}
+
+.brand em {
+  font-style: normal;
+  color: #ad875e;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.top-sub {
+  font-size: 11px;
+  color: #9aa79b;
+}
+
+.page {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 31px 34px 60px;
+}
+
+.eyebrow {
+  color: #a68255;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+
+.heading {
+  font: 500 39px/1.04 var(--font-heading);
+  letter-spacing: -1.1px;
+  color: #254331;
+  margin: 0 0 9px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0 0 var(--space-6);
+  line-height: 1.6;
+}
+
+/* Controls */
+.btn {
+  background: white;
+  border: 1px solid #d6e0d5;
+  color: #3f654b;
+  padding: 10px 14px;
+  border-radius: var(--radius-control);
+  font-size: 12px;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  line-height: 1.2;
+  min-height: 39px;
+}
+
+.btn:hover {
+  background: #f0f5ec;
+}
+
+.btn.primary {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.btn.primary:hover {
+  background: #447457;
+}
+
+.btn.sm {
+  min-height: 31px;
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+.btn.block {
+  width: 100%;
+}
+
+.input {
+  background: white;
+  border: 1px solid #d8e1d6;
+  border-radius: var(--radius-control);
+  padding: 10px 11px;
+  min-height: 40px;
+  width: 100%;
+  font-size: 12px;
+  color: #293f32;
+}
+
+.input:focus {
+  border-color: #83aa88;
+  outline: 2px solid #d1e5d2;
+  outline-offset: 0;
+}
+
+.formfield label {
+  display: block;
+  font-size: 11px;
+  color: #66816e;
+  font-weight: 750;
+  margin-bottom: 6px;
+}
+
+.notice {
+  background: #e9f3e9;
+  color: #3c6747;
+  border: 1px solid #cce0cb;
+  border-radius: var(--radius-chip);
+  padding: var(--space-3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.notice.error {
+  background: #fff0ee;
+  color: #9e5650;
+  border-color: #f0d0ca;
+}
+
+/* Auth pages */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: radial-gradient(circle at 20% 20%, #dfeadb, transparent 55%), #f9f7f1;
+}
+
+.auth-card {
+  width: min(430px, 100%);
+  background: white;
+  padding: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: 0 14px 45px #3e553b13;
+}
+
+.auth-head {
+  text-align: center;
+  margin-bottom: var(--space-2);
+}
+
+.auth-head h1 {
+  font: 500 33px var(--font-heading);
+  margin: var(--space-2) 0 0;
+}
+
+.auth-sub,
+.auth-foot {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0 var(--space-4);
+  }
+
+  .top-sub {
+    display: none;
+  }
+
+  .page {
+    padding: var(--space-6) var(--space-4) 48px;
+  }
+
+  .heading {
+    font-size: 31px;
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "my-reading-room",
+  "version": "3.0.0-alpha.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "test:legacy": "npm --prefix legacy test",
+    "db:types": "supabase gen types --lang typescript --schema public > src/types/database.ts && prettier --write src/types/database.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "dev:local": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH next dev",
+    "copy-tesseract": "node scripts/copy-tesseract.mjs",
+    "predev": "npm run copy-tesseract",
+    "prebuild": "npm run copy-tesseract",
+    "predev:local": "npm run copy-tesseract"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.1",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "tesseract.js": "^7.0.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "prettier": "^3.10.1",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  },
+  "description": "Personal reading tracker with shared, view-only partner profiles.",
+  "engines": {
+    "node": ">=22"
+  }
+}

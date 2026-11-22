@@ -1,0 +1,5 @@
+legacy/
+supabase/
+docs/
+.next/
+package-lock.json
