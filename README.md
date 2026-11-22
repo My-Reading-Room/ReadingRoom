@@ -37,9 +37,19 @@ supabase stop           # shut the local stack down
 npm run dev:local       # run the app against the local stack (the default for development)
 ```
 
-Develop against the local stack. The hosted project holds real users' data; a separate hosted
-database for preview deployments is deferred (#23). Create local test users with
-`supabase status` → Studio, or the local Auth admin API.
+Develop against the local stack. `supabase/seed.sql` loads fake test readers, books and sessions
+into it; ask a maintainer for the test sign-in details.
+
+There are two hosted Supabase projects:
+
+| Project          | Used by                                    | Data                         |
+| ---------------- | ------------------------------------------ | ---------------------------- |
+| `ReadingRoom`    | Production (`main`)                        | Real users. Never test here. |
+| `ReadingRoomDev` | Vercel preview deployments (branches, PRs) | The test seed only (#23)     |
+
+A PR that adds a migration must also apply it to `ReadingRoomDev` before merging, so previews
+keep working: `supabase db push --remote=<ReadingRoomDev ref>` (add `--dry-run` first). Never sign
+in to a preview with a real account.
 
 Schema changes go in a new migration (`supabase migration new <name>`), are tested locally with
 `supabase db reset`, and reach production only after review. Never edit production by hand in the
