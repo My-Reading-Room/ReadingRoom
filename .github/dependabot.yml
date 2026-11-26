@@ -16,12 +16,12 @@ updates:
         applies-to: version-updates
         patterns: ["*"]
     ignore:
-      # Types must match the Node version we run (.nvmrc is 22).
+      # Types must match the Node version we run (.nvmrc is 22; upgrade in #38).
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
-      # TypeScript 7 breaks the build; revisit when the toolchain supports it.
+      # typescript-eslint supports only TypeScript < 6.1; 6.x may come through (7 in #39).
       - dependency-name: typescript
-        update-types: ["version-update:semver-major"]
+        versions: [">=7"]
   - package-ecosystem: github-actions
     directory: /
     target-branch: develop
