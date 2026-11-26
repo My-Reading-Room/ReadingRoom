@@ -505,6 +505,22 @@ function OLedition(doc: Raw, fallback: EditionFallback = {}): CatalogBook {
   };
 }
 
+/**
+ * Google Books descriptions are HTML. Keep only the text outside tags. A single
+ * scan (not a regex replace) leaves no fragment from nested "<<b>script>" or
+ * unclosed tags; literal "<" in Google's HTML arrives encoded as "&lt;".
+ */
+export function plainTextDescription(html: unknown): string {
+  let text = "";
+  let inTag = false;
+  for (const char of String(html || "")) {
+    if (char === "<") inTag = true;
+    else if (char === ">") inTag = false;
+    else if (!inTag) text += char;
+  }
+  return text;
+}
+
 function googleVolume(item: Raw): CatalogBook {
   const vol = item.volumeInfo || {};
   const ids: Raw[] = vol.industryIdentifiers || [];
@@ -520,7 +536,7 @@ function googleVolume(item: Raw): CatalogBook {
     isbn,
     title: vol.title || "Untitled",
     author: (vol.authors || []).join(", ") || "Unknown author",
-    description: (vol.description || "").replace(/<[^>]+>/g, ""),
+    description: plainTextDescription(vol.description),
     published_year: year,
     edition_year: year,
     original_published_year: null,
