@@ -5,9 +5,10 @@ very welcome.
 
 ## Reporting a vulnerability
 
-Please **do not open a public issue**. Contact the maintainers directly and
-privately. (GitHub's private vulnerability reporting will be enabled if the
-repository becomes public.)
+Please **do not open a public issue**. Report it privately through GitHub:
+**Security → Report a vulnerability** on this repository
+([direct link](https://github.com/My-Reading-Room/ReadingRoom/security/advisories/new)).
+Only the maintainers can see the report.
 
 Include what you found, how to reproduce it, and what an attacker could do.
 We aim to reply within a week.
@@ -29,4 +30,7 @@ Supabase stack instead (see `README.md`).
   in `src/utils/server-env.ts` and never sent to the browser.
 - Pages use a per-request nonce Content-Security-Policy (`src/proxy.ts`).
 - CI scans every PR for leaked secrets (gitleaks) and vulnerable dependencies,
-  and CodeQL scans the code.
+  and CodeQL scans the code. GitHub secret scanning with push protection is on.
+- Dependabot alerts are on. Fixes go into `develop` first, never straight into
+  `main`: direct dependencies through the weekly update PR (or a manual "Check
+  for updates"), indirect ones with `npm audit fix` on a branch from `develop`.

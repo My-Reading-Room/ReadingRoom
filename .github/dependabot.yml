@@ -1,4 +1,8 @@
-# Weekly dependency updates (#14), grouped so they arrive as a few PRs.
+# Weekly dependency updates (#14), consolidated into one PR per ecosystem.
+# Majors are included, so the PR may not build: push fixes to its branch
+# (Dependabot stops rebasing it once someone else commits) and merge only
+# when CI is green. Security updates still arrive immediately as their own PRs.
+# Run on demand: Insights → Dependency graph → Dependabot → Check for updates.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -8,8 +12,16 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
-      minor-and-patch:
-        update-types: [minor, patch]
+      all-dependencies:
+        applies-to: version-updates
+        patterns: ["*"]
+    ignore:
+      # Types must match the Node version we run (.nvmrc is 22; upgrade in #38).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # typescript-eslint supports only TypeScript < 6.1; 6.x may come through (7 in #39).
+      - dependency-name: typescript
+        versions: [">=7"]
   - package-ecosystem: github-actions
     directory: /
     target-branch: develop
