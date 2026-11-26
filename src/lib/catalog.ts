@@ -505,6 +505,16 @@ function OLedition(doc: Raw, fallback: EditionFallback = {}): CatalogBook {
   };
 }
 
+/**
+ * Google Books descriptions are HTML. Keep only the text, then drop any stray
+ * angle brackets so no tag fragment (e.g. from nested "<<b>script>") survives.
+ */
+export function plainTextDescription(html: unknown): string {
+  return String(html || "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/[<>]/g, "");
+}
+
 function googleVolume(item: Raw): CatalogBook {
   const vol = item.volumeInfo || {};
   const ids: Raw[] = vol.industryIdentifiers || [];
@@ -520,7 +530,7 @@ function googleVolume(item: Raw): CatalogBook {
     isbn,
     title: vol.title || "Untitled",
     author: (vol.authors || []).join(", ") || "Unknown author",
-    description: (vol.description || "").replace(/<[^>]+>/g, ""),
+    description: plainTextDescription(vol.description),
     published_year: year,
     edition_year: year,
     original_published_year: null,

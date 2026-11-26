@@ -1,0 +1,8 @@
+# Scan only code that ships. Tests use fake URLs and loose matchers on purpose,
+# legacy/ is the retired app (kept for its tests), docs/ is static design mocks.
+# Workflow files are still scanned by the `actions` language.
+name: ReadingRoom CodeQL config
+paths-ignore:
+  - "**/__tests__/**"
+  - legacy/**
+  - docs/**
